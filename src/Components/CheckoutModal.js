@@ -73,7 +73,24 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
   };
 
   // Calculate prices
-  const subtotal = items.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
+  const subtotal = items.reduce((sum, item) => {
+    if (item.itemType === 'productPack') {
+      // Use pre-calculated totalPrice for ProductPacks, fallback to calculation
+      let packPrice = Number(item.productId?.totalPrice) || 0;
+      if (packPrice === 0) {
+        // Fallback calculation for existing ProductPacks without totalPrice
+        const priceInRupee = Number(item.productId?.priceInRupee) || 0;
+        const packQuantity = Number(item.productId?.quantity) || 1;
+        const discount = Number(item.productId?.discount) || 0;
+        const shippingPrice = Number(item.productId?.shippingPrice) || 0;
+        packPrice = ((priceInRupee * packQuantity) - discount + shippingPrice);
+      }
+      return sum + (packPrice * (Number(item.quantity) || 1));
+    } else {
+      const price = Number(item.productId?.price) || 0;
+      return sum + (price * (Number(item.quantity) || 1));
+    }
+  }, 0);
   const gst = subtotal * 0.18;
   const delivery = subtotal >= 499 ? 0 : 40;
   const discount = appliedDiscount;
@@ -173,9 +190,22 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
               const orderData = {
                 userId: user.id,
                 items: items.map(item => ({
-                  productId: item.productId._id,
+                  itemId: item.itemId || item.productId._id,
+                  itemType: item.itemType || 'product',
                   quantity: item.quantity,
-                  price: item.productId.price,
+                  price: item.itemType === 'productPack'
+                    ? (() => {
+                        let packPrice = Number(item.productId?.totalPrice) || 0;
+                        if (packPrice === 0) {
+                          const priceInRupee = Number(item.productId?.priceInRupee) || 0;
+                          const packQuantity = Number(item.productId?.quantity) || 1;
+                          const discount = Number(item.productId?.discount) || 0;
+                          const shippingPrice = Number(item.productId?.shippingPrice) || 0;
+                          packPrice = ((priceInRupee * packQuantity) - discount + shippingPrice);
+                        }
+                        return packPrice;
+                      })()
+                    : (item.productId?.price || 0),
                 })),
                 address: addressData,
                 paymentMethod,
@@ -226,9 +256,24 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
     const orderData = {
       userId: user.id,
       items: items.map(item => ({
-        productId: item.productId._id,
+        itemId: item.itemId || item.productId._id,
+        itemType: item.itemType || 'product',
         quantity: item.quantity,
-        price: item.productId.price,
+        price: item.itemType === 'productPack'
+          ? (() => {
+              let packPrice = Number(item.productId?.totalPrice) || 0;
+              if (packPrice === 0) {
+                const priceInRupee = Number(item.productId?.priceInRupee) || 0;
+                const packQuantity = Number(item.productId?.quantity) || 1;
+                const discount = Number(item.productId?.discount) || 0;
+                const shippingPrice = Number(item.productId?.shippingPrice) || 0;
+                packPrice = ((priceInRupee * packQuantity) - discount + shippingPrice);
+              }
+              return packPrice;
+            })()
+          : (item.productId?.price || 0),
+        quantity: item.quantity || 1,
+        quantity: item.quantity || 1,
       })),
       address: addressData,
       paymentMethod,
@@ -268,7 +313,7 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-gray-800    ">
+    <div className="fixed inset-0 bg-white/10 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 text-gray-800    ">
       <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-4">Checkout</h2>
 
@@ -277,11 +322,45 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
           <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
           {items.map((item) => (
             <div key={item._id || item.productId._id} className="flex items-center border-b py-2">
-              <img src={item.productId.images[0]} alt={item.productId.name} className="w-16 h-16 object-cover mr-4" />
+              <img
+                src={
+                  item.itemType === 'productPack'
+                    ? (item.productId.productId?.images?.[0] || 'https://via.placeholder.com/150x150?text=Pack')
+                    : (item.productId.images?.[0] || 'https://via.placeholder.com/150x150?text=Product')
+                }
+                alt={
+                  item.itemType === 'productPack'
+                    ? (item.productId?.productName || 'Product Pack')
+                    : (item.productId?.name || 'Product')
+                }
+                className="w-16 h-16 object-cover mr-4"
+              />
               <div className="flex-1">
-                <h4 className="font-semibold">{item.productId.name}</h4>
+                <h4 className="font-semibold">
+                  {item.itemType === 'productPack' ? (item.productId?.productName || 'Product Pack') : (item.productId?.name || 'Product')}
+                  {item.itemType === 'productPack' && (
+                    <span className="block text-xs text-blue-600 font-normal">
+                      Pack ({item.productId?.quantity || 1} × {item.productId?.weightInLiter || 'N/A'})
+                    </span>
+                  )}
+                </h4>
                 <p>Quantity: {item.quantity}</p>
-                <p>${item.productId.price * item.quantity}</p>
+                <p>
+                  ₹{item.itemType === 'productPack'
+                    ? (() => {
+                        let packPrice = Number(item.productId?.totalPrice) || 0;
+                        if (packPrice === 0) {
+                          const priceInRupee = Number(item.productId?.priceInRupee) || 0;
+                          const packQuantity = Number(item.productId?.quantity) || 1;
+                          const discount = Number(item.productId?.discount) || 0;
+                          const shippingPrice = Number(item.productId?.shippingPrice) || 0;
+                          packPrice = ((priceInRupee * packQuantity) - discount + shippingPrice);
+                        }
+                        return (packPrice * (Number(item.quantity) || 1)).toFixed(2);
+                      })()
+                    : ((Number(item.productId?.price) || 0) * (Number(item.quantity) || 1)).toFixed(2)
+                  }
+                </p>
               </div>
             </div>
           ))}

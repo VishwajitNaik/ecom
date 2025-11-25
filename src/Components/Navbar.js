@@ -56,10 +56,16 @@ const Navbar = () => {
                       <Link href="/Products/add" className="text-white hover:text-gray-200">Add Product</Link>
                     </li>
                     <li>
+                      <Link href="/ProductPacks" className="text-white hover:text-gray-200">Product Packs</Link>
+                    </li>
+                    <li>
                       <Link href="/admin/coupons" className="text-white hover:text-gray-200">Manage Coupons</Link>
                     </li>
                     <li>
                       <Link href="/admin/carousel" className="text-white hover:text-gray-200">Manage Carousel</Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/users" className="text-white hover:text-gray-200">Manage Users</Link>
                     </li>
                   </>
                 )}
@@ -145,6 +151,11 @@ const Navbar = () => {
                         </Link>
                       </li>
                       <li>
+                        <Link href="/ProductPacks" className="block text-white hover:text-gray-200 py-2" onClick={() => setIsDrawerOpen(false)}>
+                          Product Packs
+                        </Link>
+                      </li>
+                      <li>
                         <Link href="/admin/coupons" className="block text-white hover:text-gray-200 py-2" onClick={() => setIsDrawerOpen(false)}>
                           Manage Coupons
                         </Link>
@@ -152,6 +163,11 @@ const Navbar = () => {
                       <li>
                         <Link href="/admin/carousel" className="block text-white hover:text-gray-200 py-2" onClick={() => setIsDrawerOpen(false)}>
                           Manage Carousel
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/admin/users" className="block text-white hover:text-gray-200 py-2" onClick={() => setIsDrawerOpen(false)}>
+                          Manage Users
                         </Link>
                       </li>
                     </>

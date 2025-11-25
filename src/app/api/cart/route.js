@@ -1,5 +1,7 @@
 import connectDB from '../../../dbconfig/dbconfig';
 import Cart from '../../../models/cart';
+import Product from '../../../models/products';
+import ProductPack from '../../../models/productPack';
 import { verifyToken, getTokenFromRequest } from '../../../lib/verifyToken';
 
 export async function POST(request) {
@@ -14,13 +16,31 @@ export async function POST(request) {
     }
 
     await connectDB();
-    const { userId, productId, quantity = 1 } = await request.json();
+    const { userId, productId, quantity = 1, itemType = 'product' } = await request.json();
 
-    // Check if already in cart
-    let item = await Cart.findOne({ userId, productId });
+    // Check if already in cart - handle both old and new formats
+    let item;
+    if (itemType === 'product') {
+      // For products, check both old and new format
+      item = await Cart.findOne({
+        userId,
+        $or: [
+          { itemId: productId, itemType: 'product' },
+          { productId: productId, $or: [{ itemType: { $exists: false } }, { itemType: 'product' }] }
+        ]
+      });
+    } else {
+      // For product packs, use new format
+      item = await Cart.findOne({ userId, itemId: productId, itemType });
+    }
 
     if (item) {
       item.quantity += quantity;
+      // Migrate old format to new format if needed
+      if (!item.itemId && item.productId) {
+        item.itemId = item.productId;
+        item.itemType = itemType;
+      }
       await item.save();
       return Response.json({ message: 'Quantity updated', item });
     }
@@ -28,12 +48,16 @@ export async function POST(request) {
     // Add new item
     item = await Cart.create({
       userId,
-      productId,
+      itemId: productId,
+      itemType,
       quantity,
+      // Keep old field for backward compatibility
+      productId: itemType === 'product' ? productId : undefined,
     });
 
     return Response.json({ message: 'Added to cart', item });
   } catch (error) {
-    return Response.json({ error: 'Failed to add to cart' }, { status: 500 });
+    console.error('Cart API Error:', error);
+    return Response.json({ error: 'Failed to add to cart', details: error.message }, { status: 500 });
   }
 }

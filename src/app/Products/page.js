@@ -40,12 +40,35 @@ import Navbar from '../../Components/Navbar';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
+  const [productPacks, setProductPacks] = useState([]);
+  const [allItems, setAllItems] = useState([]);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error('Error fetching products:', err));
+    const fetchData = async () => {
+      try {
+        const [productsRes, packsRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/productPacks')
+        ]);
+
+        const productsData = await productsRes.json();
+        const packsData = await packsRes.json();
+
+        setProducts(productsData);
+        setProductPacks(packsData);
+
+        // Combine and mark types
+        const combined = [
+          ...productsData.map(p => ({ ...p, itemType: 'product' })),
+          ...packsData.map(p => ({ ...p, itemType: 'productPack' }))
+        ];
+        setAllItems(combined);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -60,24 +83,24 @@ export default function ProductsPage() {
         {/* Mobile: 4 cards per row, Desktop: Single line scroll */}
         <div className="lg:flex lg:overflow-x-auto lg:pb-6 lg:gap-6 lg:scrollbar-hide">
           <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-nowrap">
-            {products.map((product, index) => (
-              <div key={product._id} className="w-full lg:w-auto">
-                <Product product={product} index={index} />
+            {allItems.map((item, index) => (
+              <div key={`${item.itemType}-${item._id}`} className="w-full lg:w-auto">
+                <Product product={item} index={index} />
               </div>
             ))}
           </div>
         </div>
 
-        {products.length === 0 && (
+        {allItems.length === 0 && (
           <p className="text-center text-gray-500 text-lg mt-8">No products available.</p>
         )}
 
-        {products.length > 4 && (
+        {allItems.length > 4 && (
           <div className="text-center mt-6 lg:mt-8">
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white 
-              px-6 lg:px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-purple-700 
+            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white
+              px-6 lg:px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-purple-700
               transition-all duration-300 transform hover:scale-105 shadow-lg text-sm lg:text-base">
-              View All Products ({products.length})
+              View All Items ({allItems.length})
             </button>
           </div>
         )}
