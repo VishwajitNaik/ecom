@@ -21,9 +21,10 @@ const Hero = () => {
         const response = await fetch('/api/carousel/public');
         if (response.ok) {
           const data = await response.json();
-          if (data.length > 0) {
+          console.log('Carousel data received:', data);
+          if (Array.isArray(data) && data.length > 0) {
             const formattedData = data.map((item, index) => ({
-              image: item.image,
+              image: item.image || "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&h=800&fit=crop",
               title: item.title || `Slide ${index + 1}`,
               subtitle: item.description || "Welcome to Ecom Store",
               cta: item.link ? "Shop Now" : "Explore",
@@ -36,6 +37,7 @@ const Hero = () => {
             setHeroData(formattedData);
           } else {
             // Fallback to default slides if no carousel data
+            console.log('No carousel data, using fallback');
             setHeroData([
               {
                 image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&h=800&fit=crop",
@@ -46,6 +48,18 @@ const Hero = () => {
               }
             ]);
           }
+        } else {
+          console.error('Carousel API response not ok:', response.status);
+          // Fallback to default
+          setHeroData([
+            {
+              image: "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&h=800&fit=crop",
+              title: "Welcome to Ecom Store",
+              subtitle: "Discover amazing products at great prices",
+              cta: "Shop Now",
+              overlay: "from-green-900/60 via-green-800/40 to-transparent"
+            }
+          ]);
         }
       } catch (error) {
         console.error('Failed to fetch carousel data:', error);
@@ -181,8 +195,8 @@ const Hero = () => {
   };
 
   const handleCTAClick = () => {
-    const currentData = heroData[currentSlide];
-    if (currentData.link) {
+    const currentData = heroData[currentSlide] || heroData[0];
+    if (currentData && currentData.link) {
       window.location.href = currentData.link;
     } else {
       // Default action - scroll to products or navigate to products page
@@ -195,13 +209,15 @@ const Hero = () => {
     }
   };
 
-  if (loading) {
+  if (loading || heroData.length === 0) {
     return (
       <section className="relative h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </section>
     );
   }
+
+  const currentSlideData = heroData[currentSlide] || heroData[0];
 
   return (
     <section ref={containerRef} className="relative h-screen -mt-28 overflow-hidden bg-gray-900">
@@ -224,7 +240,7 @@ const Hero = () => {
                 e.target.src = `https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&h=800&fit=crop&text=Ecom+Store+${index + 1}`;
               }}
             />
-            
+
             {/* Gradient Overlay */}
             <div className={`absolute inset-0 bg-gradient-to-r ${slide.overlay}`} />
           </div>
@@ -235,21 +251,21 @@ const Hero = () => {
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="text-center text-white px-4 max-w-4xl">
           {/* Title */}
-          <h1 
+          <h1
             ref={titleRef}
             className="text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl"
           >
-            {heroData[currentSlide].title}
+            {currentSlideData.title}
           </h1>
-          
+
           {/* Subtitle */}
-          <p 
+          <p
             ref={subtitleRef}
             className="text-xl md:text-2xl mb-8 leading-relaxed drop-shadow-lg max-w-2xl mx-auto opacity-95"
           >
-            {heroData[currentSlide].subtitle}
+            {currentSlideData.subtitle}
           </p>
-          
+
           {/* CTA Button */}
           <button
             ref={ctaRef}
@@ -259,7 +275,7 @@ const Hero = () => {
             shadow-2xl border-2 border-white text-lg min-w-[200px] hover:shadow-3xl
             active:scale-95"
           >
-            {heroData[currentSlide].cta}
+            {currentSlideData.cta}
           </button>
         </div>
       </div>
@@ -271,8 +287,8 @@ const Hero = () => {
             key={index}
             onClick={() => goToSlide(index)}
             className={`w-4 h-4 rounded-full cursor-pointer transition-all duration-300 border-2 border-white ${
-              currentSlide === index 
-                ? 'bg-white scale-125 shadow-lg' 
+              currentSlide === index
+                ? 'bg-white scale-125 shadow-lg'
                 : 'bg-transparent hover:bg-white/50 hover:scale-110'
             }`}
             aria-label={`Go to slide ${index + 1}`}

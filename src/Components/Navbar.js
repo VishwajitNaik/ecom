@@ -43,88 +43,102 @@ const Navbar = () => {
 
   // GSAP Animations
   useEffect(() => {
-    if (!navbarRef.current) return;
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (!navbarRef.current) return;
 
-    const tl = gsap.timeline();
+      const tl = gsap.timeline();
 
-    // Navbar entrance animation
-    tl.fromTo(navbarRef.current,
-      {
-        y: -100,
-        opacity: 0
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out"
+      // Navbar entrance animation
+      if (navbarRef.current) {
+        tl.fromTo(navbarRef.current,
+          {
+            y: -100,
+            opacity: 0
+          },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out"
+          }
+        );
       }
-    );
 
-    // Logo animation
-    tl.fromTo(logoRef.current,
-      {
-        x: -50,
-        opacity: 0,
-        rotation: -10
-      },
-      {
-        x: 0,
-        opacity: 1,
-        rotation: 0,
-        duration: 0.6,
-        ease: "back.out(1.7)"
-      },
-      "-=0.4"
-    );
+      // Logo animation
+      if (logoRef.current) {
+        tl.fromTo(logoRef.current,
+          {
+            x: -50,
+            opacity: 0,
+            rotation: -10
+          },
+          {
+            x: 0,
+            opacity: 1,
+            rotation: 0,
+            duration: 0.6,
+            ease: "back.out(1.7)"
+          },
+          "-=0.4"
+        );
+      }
 
-    // Menu items staggered animation
-    tl.fromTo(menuItemsRef.current,
-      {
-        y: -20,
-        opacity: 0,
-        scale: 0.8
-      },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "back.out(1.5)"
-      },
-      "-=0.3"
-    );
+      // Menu items staggered animation
+      if (menuItemsRef.current && menuItemsRef.current.length > 0) {
+        tl.fromTo(menuItemsRef.current.filter(Boolean),
+          {
+            y: -20,
+            opacity: 0,
+            scale: 0.8
+          },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "back.out(1.5)"
+          },
+          "-=0.3"
+        );
+      }
+    }, 100);
 
+    return () => clearTimeout(timer);
   }, []);
 
   // Drawer animations
   useEffect(() => {
     if (isDrawerOpen) {
       // Open drawer animation
-      gsap.fromTo(drawerRef.current,
-        {
-          x: 300,
-          opacity: 0
-        },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.4,
-          ease: "power2.out"
-        }
-      );
+      if (drawerRef.current) {
+        gsap.fromTo(drawerRef.current,
+          {
+            x: 300,
+            opacity: 0
+          },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.4,
+            ease: "power2.out"
+          }
+        );
+      }
 
-      gsap.fromTo(backdropRef.current,
-        {
-          opacity: 0
-        },
-        {
-          opacity: 1,
-          duration: 0.3,
-          ease: "power2.out"
-        }
-      );
+      if (backdropRef.current) {
+        gsap.fromTo(backdropRef.current,
+          {
+            opacity: 0
+          },
+          {
+            opacity: 1,
+            duration: 0.3,
+            ease: "power2.out"
+          }
+        );
+      }
 
       // Animate drawer items
       gsap.fromTo(".drawer-item",
@@ -211,19 +225,30 @@ const Navbar = () => {
 
   const handleLogout = () => {
     // Logout animation
-    gsap.to(".nav-item", {
-      opacity: 0.5,
-      duration: 0.3,
-      stagger: 0.05,
-      onComplete: () => {
-        localStorage.removeItem('token');
-        document.cookie = 'token=; path=/; max-age=0';
-        setIsLoggedIn(false);
-        setUserRole(null);
-        toast.success('Logged out successfully');
-        router.push('/');
-      }
-    });
+    const navItems = document.querySelectorAll('.nav-item');
+    if (navItems.length > 0) {
+      gsap.to(navItems, {
+        opacity: 0.5,
+        duration: 0.3,
+        stagger: 0.05,
+        onComplete: () => {
+          localStorage.removeItem('token');
+          document.cookie = 'token=; path=/; max-age=0';
+          setIsLoggedIn(false);
+          setUserRole(null);
+          toast.success('Logged out successfully');
+          router.push('/');
+        }
+      });
+    } else {
+      // Fallback if no nav items found
+      localStorage.removeItem('token');
+      document.cookie = 'token=; path=/; max-age=0';
+      setIsLoggedIn(false);
+      setUserRole(null);
+      toast.success('Logged out successfully');
+      router.push('/');
+    }
   };
 
   const handleLinkClick = (path) => {
@@ -252,19 +277,23 @@ const Navbar = () => {
   };
 
   const handleHoverEnter = (element) => {
-    gsap.to(element, {
-      scale: 1.05,
-      duration: 0.2,
-      ease: "power2.out"
-    });
+    if (element) {
+      gsap.to(element, {
+        scale: 1.05,
+        duration: 0.2,
+        ease: "power2.out"
+      });
+    }
   };
 
   const handleHoverLeave = (element) => {
-    gsap.to(element, {
-      scale: 1,
-      duration: 0.2,
-      ease: "power2.out"
-    });
+    if (element) {
+      gsap.to(element, {
+        scale: 1,
+        duration: 0.2,
+        ease: "power2.out"
+      });
+    }
   };
 
   const addToMenuRefs = (el, index) => {

@@ -5,8 +5,11 @@ export async function GET(request) {
   try {
     await connectDB();
     const carousels = await Carousel.find({ isActive: true }).sort({ order: 1 });
+    console.log('Fetched carousels:', carousels.length);
     return Response.json(carousels);
   } catch (error) {
-    return Response.json({ error: 'Failed to fetch carousels' }, { status: 500 });
+    console.error('Carousel fetch error:', error);
+    // Return empty array instead of error to prevent frontend crashes
+    return Response.json([]);
   }
 }
