@@ -14,11 +14,34 @@ export async function GET(request) {
     }
 
     await connectDB();
-    const orders = await Order.find({ userId: user.id })
-      .populate('items.productId')
-      .sort({ createdAt: -1 });
+    const orders = await Order.find({ userId: user.id }).sort({ createdAt: -1 });
 
-    return Response.json(orders);
+    // Manually populate items based on itemType
+    const populatedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const populatedItems = await Promise.all(
+          order.items.map(async (item) => {
+            let populatedItem = item.toObject();
+            if (item.itemType === 'productPack') {
+              const ProductPack = (await import('../../../models/productPack')).default;
+              const productPack = await ProductPack.findById(item.itemId).populate('productId');
+              populatedItem.productData = productPack;
+            } else {
+              const Product = (await import('../../../models/products')).default;
+              const product = await Product.findById(item.itemId);
+              populatedItem.productData = product;
+            }
+            return populatedItem;
+          })
+        );
+        return {
+          ...order.toObject(),
+          items: populatedItems
+        };
+      })
+    );
+
+    return Response.json(populatedOrders);
   } catch (error) {
     return Response.json({ error: 'Failed to fetch orders' }, { status: 500 });
   }

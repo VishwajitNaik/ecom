@@ -273,7 +273,6 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
             })()
           : (item.productId?.price || 0),
         quantity: item.quantity || 1,
-        quantity: item.quantity || 1,
       })),
       address: addressData,
       paymentMethod,

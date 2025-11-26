@@ -272,7 +272,7 @@ const AddProductPage = () => {
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 px-4"
+      className="min-h-screen bg-gradient-to-br text-gray-800 from-blue-50 via-purple-50 to-pink-50 py-8 px-4"
       style={{ opacity: 0 }}
     >
       <div className="max-w-4xl mx-auto">

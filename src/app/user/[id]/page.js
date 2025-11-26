@@ -254,23 +254,47 @@ export default function UserDetailPage() {
                   {order.items.map((item, index) => (
                     <div key={index} className="flex items-center space-x-4 bg-gray-50 rounded-lg p-3">
                       <div className="flex-shrink-0">
-                        {item.productId?.images?.[0] ? (
-                          <Image
-                            src={item.productId.images[0]}
-                            alt={item.productId.name}
-                            width={60}
-                            height={60}
-                            className="rounded-lg object-cover"
-                          />
+                        {item.itemType === 'productPack' ? (
+                          item.productData?.productId?.images?.[0] ? (
+                            <Image
+                              src={item.productData.productId.images[0]}
+                              alt={item.productData.productName}
+                              width={60}
+                              height={60}
+                              className="rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="w-15 h-15 bg-gray-200 rounded-lg flex items-center justify-center">
+                              <span className="text-xs text-gray-500">Pack</span>
+                            </div>
+                          )
                         ) : (
-                          <div className="w-15 h-15 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <span className="text-xs text-gray-500">No Image</span>
-                          </div>
+                          item.productData?.images?.[0] ? (
+                            <Image
+                              src={item.productData.images[0]}
+                              alt={item.productData.name}
+                              width={60}
+                              height={60}
+                              className="rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="w-15 h-15 bg-gray-200 rounded-lg flex items-center justify-center">
+                              <span className="text-xs text-gray-500">No Image</span>
+                            </div>
+                          )
                         )}
                       </div>
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-800">
-                          {item.productId?.name || 'Product'}
+                          {item.itemType === 'productPack'
+                            ? (item.productData?.productName || 'Product Pack')
+                            : (item.productData?.name || 'Product')
+                          }
+                          {item.itemType === 'productPack' && (
+                            <span className="block text-xs text-blue-600">
+                              Pack ({item.productData?.quantity || 1} × {item.productData?.weightInLiter || 'N/A'})
+                            </span>
+                          )}
                         </h4>
                         <p className="text-sm text-gray-600">
                           Quantity: {item.quantity} × ₹{item.price.toFixed(2)}

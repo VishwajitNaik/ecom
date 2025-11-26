@@ -204,7 +204,7 @@ const Hero = () => {
   }
 
   return (
-    <section ref={containerRef} className="relative h-screen overflow-hidden bg-gray-900">
+    <section ref={containerRef} className="relative h-screen -mt-28 overflow-hidden bg-gray-900">
       {/* Background Carousel */}
       <div ref={carouselRef} className="absolute inset-0">
         {heroData.map((slide, index) => (

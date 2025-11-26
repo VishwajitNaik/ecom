@@ -27,10 +27,33 @@ export async function GET(request, { params }) {
       return Response.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get user's orders with populated product details
-    const orders = await Order.find({ userId: id })
-      .populate('items.productId')
-      .sort({ createdAt: -1 });
+    // Get user's orders
+    const orders = await Order.find({ userId: id }).sort({ createdAt: -1 });
+
+    // Manually populate items based on itemType
+    const populatedOrders = await Promise.all(
+      orders.map(async (order) => {
+        const populatedItems = await Promise.all(
+          order.items.map(async (item) => {
+            let populatedItem = item.toObject();
+            if (item.itemType === 'productPack') {
+              const ProductPack = (await import('../../../../models/productPack')).default;
+              const productPack = await ProductPack.findById(item.itemId).populate('productId');
+              populatedItem.productData = productPack;
+            } else {
+              const Product = (await import('../../../../models/products')).default;
+              const product = await Product.findById(item.itemId);
+              populatedItem.productData = product;
+            }
+            return populatedItem;
+          })
+        );
+        return {
+          ...order.toObject(),
+          items: populatedItems
+        };
+      })
+    );
 
     // Calculate order statistics
     const totalOrders = orders.length;

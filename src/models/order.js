@@ -8,10 +8,14 @@ const orderSchema = new mongoose.Schema({
   },
   items: [
     {
-      productId: {
+      itemId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
         required: true,
+      },
+      itemType: {
+        type: String,
+        enum: ['product', 'productPack'],
+        default: 'product',
       },
       quantity: {
         type: Number,

@@ -25,6 +25,8 @@ export default function SignIn() {
       // Set cookie for middleware
       document.cookie = `token=${data.token}; path=/; max-age=604800`; // 7 days
       toast.success('Signed in successfully');
+      // Dispatch custom event to notify navbar of auth change
+      window.dispatchEvent(new CustomEvent('authChange'));
       router.push('/');
     } else {
       toast.error(data.error);

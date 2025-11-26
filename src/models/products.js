@@ -33,6 +33,17 @@ const productSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  averageRating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5,
+  },
+  totalReviews: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
 }, {
   timestamps: true,
 });
