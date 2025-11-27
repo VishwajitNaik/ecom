@@ -86,8 +86,9 @@ export default function SignIn() {
       
       if (res.ok) {
         localStorage.setItem('token', data.token);
-        // Set cookie for middleware
-        document.cookie = `token=${data.token}; path=/; max-age=604800`; // 7 days
+        // Set cookie for middleware (secure in production)
+        const isProduction = process.env.NODE_ENV === 'production';
+        document.cookie = `token=${data.token}; path=/; max-age=604800; samesite=strict${isProduction ? '; secure' : ''}`;
         
         // Success animation
         gsap.to(formRef.current, {
