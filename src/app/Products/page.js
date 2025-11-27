@@ -393,7 +393,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-gradient-to-br -mt-5 pt-5 from-blue-50 to-indigo-100">
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-br -mt-5 pt-5 from-slate-300 to-indigo-100">
       <Navbar />
       
       <main className="container mx-auto px-3 lg:px-4 py-6 lg:py-8 text-gray-800">

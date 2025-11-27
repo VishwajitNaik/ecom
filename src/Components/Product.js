@@ -525,7 +525,7 @@ const Product = ({ product, index, onBuyNow }) => {
   return (
     <div
       ref={productRef}
-      className="w-full bg-white rounded-xl shadow-md border border-gray-200
+      className="w-full hover:shadow-gray-600 rounded-xl shadow-md border border-gray-200
       hover:shadow-lg hover:scale-105 transition-all duration-300 overflow-hidden cursor-pointer
       lg:flex-shrink-0 lg:w-80"
       style={{ opacity: 0 }}
