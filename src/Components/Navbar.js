@@ -635,6 +635,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { getUserFromToken } from '../lib/getUser';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 
 const Navbar = () => {
@@ -939,10 +940,22 @@ const Navbar = () => {
   return (
     <>
       <nav ref={navbarRef} className="shadow-lg shadow-gray-600 shadow-inset bg-gradient-to-r from-gray-900 to-gray-800 p-4 mx-10 my-5 rounded-xl relative z-[9999]">
-        <div className="container mx-auto flex justify-between items-center">
-          <div ref={logoRef} className="text-white text-xl font-bold">
-            <Link href="/">Ecom Store</Link>
+        <div className="container mx-auto flex justify-between items-center relative">
+          {/* Logo positioned absolutely and larger */}
+          <div ref={logoRef} className="absolute top-1/2 transform -translate-y-1/2 z-10">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/assets/main/logo2.png"
+                alt="Company Logo"
+                width={100}
+                height={100}
+                className="w-36 h-36 lg:w-48 lg:h-48 object-contain hover:scale-110 transition-transform duration-300"
+              />
+            </Link>
           </div>
+
+          {/* Spacer to account for absolute positioned logo */}
+          <div className="w-16 lg:w-20"></div>
 
           {/* Desktop Menu */}
           <ul className="hidden md:flex space-x-4">

@@ -263,6 +263,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import Product from '../../Components/Product';
 import Navbar from '../../Components/Navbar';
+import Image from 'next/image';
 import CheckoutModal from '../../Components/CheckoutModal';
 
 export default function ProductsPage() {
@@ -396,17 +397,41 @@ export default function ProductsPage() {
     <div ref={containerRef} className="min-h-screen bg-gradient-to-br -mt-5 pt-5 from-slate-300 to-indigo-100">
       <Navbar />
       
-      <main className="container mx-auto px-3 lg:px-4 py-6 lg:py-8 text-gray-800">
-        <h1 className="text-2xl lg:text-4xl font-bold mb-8 lg:mb-12 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Our Products
-        </h1>
+      <main className="container mx-auto px-3 lg:px-4 py-6 lg:py-8 text-gray-800 bg-white/80">
+
+<h1 className="flex flex-row items-center justify-center gap-3 lg:gap-6 text-2xl lg:text-4xl font-bold mb-8 lg:mb-12">
+  <Image
+    src="/assets/main/ayurveda6-removebg-preview.png"
+    alt="Ayurvedic Elements"
+    width={120}
+    height={120}
+    className="w-20 h-20 lg:w-28 lg:h-28 object-contain"
+  />
+  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    Our Products
+  </span>
+  <Image
+    src="/assets/main/ayurveda6-removebg-preview.png"
+    alt="Ayurvedic Elements"
+    width={120}
+    height={120}
+    className="w-20 h-20 lg:w-28 lg:h-28 object-contain"
+  />
+</h1>
         
         {/* Products Section */}
         {products.length > 0 && (
           <section className="mb-12 lg:mb-16">
-            <h2 className="section-title text-xl lg:text-3xl font-bold mb-6 lg:mb-8 text-gray-800 ">
-              Individual Products
-            </h2>
+<h2 className="flex items-center text-xl lg:text-3xl font-bold mb-6 lg:mb-8 text-gray-800">
+  <Image
+    src="/assets/main/ayurveda5-removebg-preview.png"
+    alt="Ayurvedic Product"
+    width={80}
+    height={80}
+    className="w-20 h-20 lg:w-12 lg:h-12 object-contain"
+  />
+  Individual Products
+</h2>
             
             <div className="relative">
               {/* Desktop: Horizontal Scroll with Slider */}
@@ -465,9 +490,17 @@ export default function ProductsPage() {
         {/* Product Packs Section */}
         {productPacks.length > 0 && (
           <section className="mb-12 lg:mb-16">
-            <h2 className="section-title text-xl lg:text-3xl font-bold mb-6 lg:mb-8 text-gray-800">
-              Product Packs & Bundles
-            </h2>
+            <h2 className="flex items-center text-xl lg:text-3xl font-bold mb-6 lg:mb-8 text-gray-800">
+            <Image
+              src="/assets/main/ayurveda4-removebg-preview.png"
+              alt="Ayurvedic Product"
+              width={80}
+              height={100}
+              className="w-20 h-24 lg:w-12 lg:h-12 object-contain"
+            />
+            Product Packs & Bundles
+          </h2>
+    
             
             <div className="relative">
               {/* Desktop: Horizontal Scroll with Slider */}
