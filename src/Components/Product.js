@@ -461,7 +461,9 @@ const Product = ({ product, index, onBuyNow }) => {
     e.stopPropagation();
     const user = getUserFromToken();
     if (!user) {
-      toast.error('Please login to buy now');
+      toast.error('Please login to buy products');
+      // Redirect to login page with return URL
+      router.push('/user/SignIn?redirect=' + encodeURIComponent(window.location.pathname));
       return;
     }
     // Call parent handler instead of managing modal state here

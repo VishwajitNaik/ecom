@@ -17,10 +17,10 @@ export async function POST(request) {
     }
 
     await connectDB();
-    const { name, description, price, images, category, stock, manufacturedDate, expireDate } = await request.json();
+    const { name, description, price, images, category, stock, manufacturedDate, expireDate, externalLinks } = await request.json();
 
     // Create product
-    const product = new Product({ name, description, price, images, category, stock, manufacturedDate, expireDate });
+    const product = new Product({ name, description, price, images, category, stock, manufacturedDate, expireDate, externalLinks });
     await product.save();
 
     return Response.json({ message: 'Product added successfully', product });

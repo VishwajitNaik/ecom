@@ -11,6 +11,11 @@ const reviewSchema = new mongoose.Schema({
     ref: 'Product',
     required: true,
   },
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+    required: true,
+  },
   rating: {
     type: Number,
     required: true,
@@ -19,7 +24,7 @@ const reviewSchema = new mongoose.Schema({
   },
   comment: {
     type: String,
-    required: true,
+    required: false, // Making it optional for the popup
     trim: true,
   },
   images: [{
@@ -37,8 +42,9 @@ const reviewSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Compound index to ensure one review per user per product
-reviewSchema.index({ userId: 1, productId: 1 }, { unique: true });
+// Compound index to ensure one review per user per product per order
+// Temporarily removing unique constraint to handle migration
+reviewSchema.index({ userId: 1, productId: 1, orderId: 1 }, { sparse: true });
 
 const Review = mongoose.models.Review || mongoose.model('Review', reviewSchema);
 

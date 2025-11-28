@@ -33,6 +33,27 @@ const productSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  externalLinks: [{
+    platform: {
+      type: String,
+      required: true,
+      enum: ['amazon', 'flipkart', 'other']
+    },
+    url: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function(v) {
+          return /^https?:\/\/.+/.test(v);
+        },
+        message: 'URL must start with http:// or https://'
+      }
+    },
+    price: {
+      type: Number,
+      min: 0
+    }
+  }],
   averageRating: {
     type: Number,
     default: 0,

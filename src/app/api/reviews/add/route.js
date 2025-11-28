@@ -16,41 +16,75 @@ export async function POST(request) {
     }
 
     await connectDB();
-    const { productId, rating, comment, images } = await request.json();
+    const { productId, rating, reviewText, orderId } = await request.json();
 
-    // Verify user has purchased and received the product
+    // Verify the order exists and belongs to the user
     const order = await Order.findOne({
+      _id: orderId,
       userId: user.id,
-      'items.itemId': productId,
-      orderStatus: { $regex: /^delivered$/i } // Case-insensitive match
+      orderStatus: 'delivered'
     });
 
     if (!order) {
       return Response.json({
-        error: 'You can only review products you have purchased and received'
+        error: 'Invalid order or product not delivered yet'
       }, { status: 403 });
     }
 
-    // Check if user already reviewed this product
-    const existingReview = await Review.findOne({
-      userId: user.id,
-      productId: productId
-    });
+    // Check if this specific product is in the order
+    const orderItem = order.items.find(item =>
+      (item.itemId.toString() === productId.toString()) ||
+      (item.itemId._id && item.itemId._id.toString() === productId.toString())
+    );
 
-    if (existingReview) {
+    if (!orderItem) {
       return Response.json({
-        error: 'You have already reviewed this product'
-      }, { status: 400 });
+        error: 'Product not found in this order'
+      }, { status: 403 });
     }
 
-    // Create the review
-    const review = new Review({
+    // Try to find existing review for this order
+    let review = await Review.findOne({
       userId: user.id,
-      productId,
-      rating: parseInt(rating),
-      comment,
-      images: images || [],
+      productId: productId,
+      orderId: orderId
     });
+
+    if (review) {
+      // Update existing review
+      review.rating = parseInt(rating);
+      review.comment = reviewText || '';
+      await review.save();
+    } else {
+      // Check for old reviews without orderId and update them
+      const oldReview = await Review.findOne({
+        userId: user.id,
+        productId: productId,
+        $or: [
+          { orderId: { $exists: false } },
+          { orderId: null }
+        ]
+      });
+
+      if (oldReview) {
+        // Update old review with orderId and new data
+        oldReview.orderId = orderId;
+        oldReview.rating = parseInt(rating);
+        oldReview.comment = reviewText || '';
+        await oldReview.save();
+        review = oldReview;
+      } else {
+        // Create completely new review
+        review = new Review({
+          userId: user.id,
+          productId,
+          orderId,
+          rating: parseInt(rating),
+          comment: reviewText || '',
+        });
+        await review.save();
+      }
+    }
 
     await review.save();
 

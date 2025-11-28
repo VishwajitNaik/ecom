@@ -258,7 +258,7 @@ const CarouselPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br -mt-5 pt-5 from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br -mt-5 pt-5 text-gray-800 from-slate-50 via-blue-50 to-indigo-100">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div ref={containerRef} className="max-w-7xl mx-auto">

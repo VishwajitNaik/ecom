@@ -1,15 +1,12 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Comic_Neue } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
+import Footer from '../Components/Footer';
+import ReviewPrompt from '../Components/ReviewPrompt';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const comicNeue = Comic_Neue({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "700"],
 });
 
 export const metadata = {
@@ -21,10 +18,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${comicNeue.className} antialiased`}
       >
         {children}
         <Toaster />
+        <ReviewPrompt />
+        <Footer />
       </body>
     </html>
   );

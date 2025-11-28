@@ -1,5 +1,6 @@
 import connectDB from '../../../../dbconfig/dbconfig';
 import Order from '../../../../models/order';
+import User from '../../../../models/user'; // Import User model for populate
 import { verifyToken, getTokenFromRequest } from '../../../../lib/verifyToken';
 
 export async function GET(request) {

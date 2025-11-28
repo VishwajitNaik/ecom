@@ -63,6 +63,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const router = useRouter();
   const [product, setProduct] = useState(null);
+  const [productDetails, setProductDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -88,13 +89,27 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     try {
-      const res = await fetch(`/api/products/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setProduct(data);
+      // Fetch product details
+      const [productRes, detailsRes] = await Promise.all([
+        fetch(`/api/products/${id}`),
+        fetch(`/api/productDetails/by-product/${id}`)
+      ]);
+
+      if (productRes.ok) {
+        const productData = await productRes.json();
+        setProduct(productData);
       } else {
         toast.error('Product not found');
         router.push('/Products');
+        return;
+      }
+
+      // Product details are optional, so we don't fail if they're not found
+      if (detailsRes.ok) {
+        const detailsData = await detailsRes.json();
+        if (detailsData.success && detailsData.productDetails) {
+          setProductDetails(detailsData.productDetails);
+        }
       }
     } catch (error) {
       toast.error('Failed to load product');
@@ -375,6 +390,92 @@ export default function ProductDetail() {
               </div>
             </div>
           </div>
+
+          {/* Product Details Section */}
+          {productDetails && (
+            <div className="mb-16">
+              <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6">Product Details</h2>
+
+                {/* About Section */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">About This Product</h3>
+                  <p className="text-gray-600 leading-relaxed">{productDetails.about}</p>
+                </div>
+
+                {/* Info Section */}
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Product Information</h3>
+                  <p className="text-gray-600 leading-relaxed">{productDetails.info}</p>
+                </div>
+
+                {/* Gradients Section */}
+                {productDetails.gradients && productDetails.gradients.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Design Gradients</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {productDetails.gradients.map((gradient, index) => (
+                        <div
+                          key={index}
+                          className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium text-gray-700"
+                        >
+                          {gradient}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Images */}
+                {productDetails.additionalImages && productDetails.additionalImages.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Additional Images</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {productDetails.additionalImages.map((image, index) => (
+                        <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                          <Image
+                            src={image}
+                            alt={`Product detail ${index + 1}`}
+                            width={200}
+                            height={200}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Powered By Section */}
+                {productDetails.poweredBy && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Powered By</h3>
+                    <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
+                      <p className="text-gray-700 font-medium">{productDetails.poweredBy}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Opinion Section */}
+                {productDetails.opinion && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4">Expert Opinion</h3>
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-sm">★</span>
+                        </div>
+                        <div>
+                          <p className="text-gray-700 leading-relaxed italic">"{productDetails.opinion}"</p>
+                          <p className="text-sm text-gray-500 mt-2">— Ayurvedic Expert</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Reviews Section */}
           <ReviewsSection productId={id} />

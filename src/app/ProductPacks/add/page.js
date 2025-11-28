@@ -10,6 +10,7 @@ const AddProductPackPage = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [externalLinks, setExternalLinks] = useState([]);
   const [formData, setFormData] = useState({
     productName: '',
     typeOfPack: '',
@@ -100,6 +101,21 @@ const AddProductPackPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const addExternalLink = () => {
+    setExternalLinks([...externalLinks, { platform: 'amazon', url: '', price: '' }]);
+  };
+
+  const updateExternalLink = (index, field, value) => {
+    const updated = externalLinks.map((link, i) =>
+      i === index ? { ...link, [field]: value } : link
+    );
+    setExternalLinks(updated);
+  };
+
+  const removeExternalLink = (index) => {
+    setExternalLinks(externalLinks.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -114,6 +130,7 @@ const AddProductPackPage = () => {
         },
         body: JSON.stringify({
           ...formData,
+          externalLinks: externalLinks.filter(link => link.url.trim() !== ''), // Only include links with URLs
           dayOfDose: parseInt(formData.dayOfDose),
           priceInRupee: parseFloat(formData.priceInRupee),
           shippingPrice: parseFloat(formData.shippingPrice),
@@ -419,6 +436,84 @@ const AddProductPackPage = () => {
                     placeholder="e.g., 50.00"
                     className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 placeholder-gray-400 backdrop-blur-sm"
                   />
+                </div>
+
+                {/* External Links */}
+                <div className="form-element lg:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    External Links (Optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Add links to other platforms like Amazon, Flipkart, etc.
+                  </p>
+
+                  {/* Existing Links */}
+                  {externalLinks.map((link, index) => (
+                    <div key={index} className="flex gap-2 items-end mb-2 p-3 bg-gray-50 rounded-xl">
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Platform
+                        </label>
+                        <select
+                          value={link.platform}
+                          onChange={(e) => updateExternalLink(index, 'platform', e.target.value)}
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 transition-all duration-200 text-sm"
+                        >
+                          <option value="amazon">Amazon</option>
+                          <option value="flipkart">Flipkart</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          URL
+                        </label>
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) => updateExternalLink(index, 'url', e.target.value)}
+                          placeholder="https://..."
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 transition-all duration-200 text-sm"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Price (Optional)
+                        </label>
+                        <input
+                          type="number"
+                          value={link.price}
+                          onChange={(e) => updateExternalLink(index, 'price', e.target.value)}
+                          placeholder="0.00"
+                          min="0"
+                          step="0.01"
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 transition-all duration-200 text-sm"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeExternalLink(index)}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                        title="Remove link"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Add Link Button */}
+                  <button
+                    type="button"
+                    onClick={addExternalLink}
+                    className="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add External Link
+                  </button>
                 </div>
 
                 {/* Submit Button */}

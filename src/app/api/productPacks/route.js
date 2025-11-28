@@ -35,7 +35,8 @@ export async function POST(request) {
       usePerDay,
       quantity,
       discount,
-      productId
+      productId,
+      externalLinks
     } = await request.json();
 
     // Calculate total price: (priceInRupee * quantity) - discount + shippingPrice
@@ -52,7 +53,8 @@ export async function POST(request) {
       quantity,
       discount,
       totalPrice,
-      productId
+      productId,
+      externalLinks
     });
 
     await productPack.save();

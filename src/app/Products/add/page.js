@@ -15,6 +15,7 @@ const AddProductPage = () => {
     expireDate: '',
   });
   const [images, setImages] = useState([]);
+  const [externalLinks, setExternalLinks] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -176,6 +177,21 @@ const AddProductPage = () => {
     }
   };
 
+  const addExternalLink = () => {
+    setExternalLinks([...externalLinks, { platform: 'amazon', url: '', price: '' }]);
+  };
+
+  const updateExternalLink = (index, field, value) => {
+    const updated = externalLinks.map((link, i) =>
+      i === index ? { ...link, [field]: value } : link
+    );
+    setExternalLinks(updated);
+  };
+
+  const removeExternalLink = (index) => {
+    setExternalLinks(externalLinks.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (images.length === 0) {
@@ -204,6 +220,7 @@ const AddProductPage = () => {
         body: JSON.stringify({
           ...formData,
           images,
+          externalLinks: externalLinks.filter(link => link.url.trim() !== ''), // Only include links with URLs
           price: parseFloat(formData.price),
           stock: parseInt(formData.stock),
           manufacturedDate: new Date(formData.manufacturedDate),
@@ -236,7 +253,8 @@ const AddProductPage = () => {
             expireDate: '',
           });
           setImages([]);
-          
+          setExternalLinks([]);
+
           // Reset animation
           gsap.to(formRef.current, {
             backgroundColor: 'white',
@@ -494,6 +512,84 @@ const AddProductPage = () => {
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* External Links */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    External Links (Optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Add links to other platforms like Amazon, Flipkart, etc.
+                  </p>
+
+                  {/* Existing Links */}
+                  {externalLinks.map((link, index) => (
+                    <div key={index} className="flex gap-2 items-end mb-2 p-3 bg-gray-50 rounded-xl">
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Platform
+                        </label>
+                        <select
+                          value={link.platform}
+                          onChange={(e) => updateExternalLink(index, 'platform', e.target.value)}
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all duration-200 text-sm"
+                        >
+                          <option value="amazon">Amazon</option>
+                          <option value="flipkart">Flipkart</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          URL
+                        </label>
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) => updateExternalLink(index, 'url', e.target.value)}
+                          placeholder="https://..."
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all duration-200 text-sm"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Price (Optional)
+                        </label>
+                        <input
+                          type="number"
+                          value={link.price}
+                          onChange={(e) => updateExternalLink(index, 'price', e.target.value)}
+                          placeholder="0.00"
+                          min="0"
+                          step="0.01"
+                          className="w-full p-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all duration-200 text-sm"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeExternalLink(index)}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                        title="Remove link"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Add Link Button */}
+                  <button
+                    type="button"
+                    onClick={addExternalLink}
+                    className="w-full p-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add External Link
+                  </button>
                 </div>
               </div>
             </div>
