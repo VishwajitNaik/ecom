@@ -4,23 +4,47 @@ import admin from 'firebase-admin';
 function initializeFirebaseAdmin() {
   if (!admin.apps.length) {
     try {
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      // Handle private key - it might be JSON stringified or have escaped newlines
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY;
       
-      if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+      if (!privateKey) {
+        console.warn('FIREBASE_PRIVATE_KEY not found');
+        return null;
+      }
+      
+      // If the key is wrapped in quotes (from Vercel), remove them
+      if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1);
+      }
+      
+      // Replace escaped newlines with actual newlines
+      privateKey = privateKey.replace(/\\n/g, '\n');
+      
+      const projectId = process.env.FIREBASE_PROJECT_ID;
+      const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+      
+      console.log('Firebase Admin Config Check:');
+      console.log('- Project ID:', projectId ? 'SET' : 'MISSING');
+      console.log('- Client Email:', clientEmail ? 'SET' : 'MISSING');
+      console.log('- Private Key:', privateKey ? `SET (${privateKey.length} chars)` : 'MISSING');
+      console.log('- Private Key starts with:', privateKey?.substring(0, 30));
+      
+      if (!projectId || !clientEmail || !privateKey) {
         console.warn('Firebase Admin SDK credentials not fully configured');
         return null;
       }
 
       admin.initializeApp({
         credential: admin.credential.cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey,
+          projectId,
+          clientEmail,
+          privateKey,
         }),
       });
       console.log('Firebase Admin initialized successfully');
     } catch (error) {
-      console.error('Firebase Admin initialization error:', error);
+      console.error('Firebase Admin initialization error:', error.message);
+      console.error('Full error:', error);
       return null;
     }
   }
