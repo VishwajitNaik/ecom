@@ -12,6 +12,8 @@
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.8.0",
     "crypto": "^1.0.1",
+    "firebase": "^12.6.0",
+    "firebase-admin": "^13.6.0",
     "gsap": "^3.13.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",

@@ -593,7 +593,7 @@ export default function Home() {
 
         <div className="absolute bottom-20 right-20 bg-white rounded-2xl p-3 shadow-xl border border-gray-200/50">
           <img 
-            src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=150&h=150&fit=crop&crop=center" 
+            src="assets/aurvedaman.webp" 
             alt="Smartphone"
             className="w-16 h-16 rounded-lg object-cover"
           />

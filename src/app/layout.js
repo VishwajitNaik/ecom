@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import Footer from '../Components/Footer';
 import ReviewPrompt from '../Components/ReviewPrompt';
+import AdminNotifications from '../Components/AdminNotifications';
 
 const comicNeue = Comic_Neue({
   subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster />
         <ReviewPrompt />
+        <AdminNotifications />
         <Footer />
       </body>
     </html>

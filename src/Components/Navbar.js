@@ -939,7 +939,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav ref={navbarRef} className="shadow-lg shadow-gray-600 shadow-inset bg-gradient-to-r from-gray-900 to-gray-800 p-4 mx-10 my-5 rounded-xl relative z-[9999]">
+      <nav ref={navbarRef} className="shadow-lg shadow-gray-600 shadow-inset bg-gradient-to-r from-white to-gray-800 p-4 mx-5 my-5 rounded-xl relative z-[9999]">
         <div className="container mx-auto flex justify-between items-center relative">
           {/* Logo positioned absolutely and larger */}
           <div ref={logoRef} className="absolute top-1/2 transform -translate-y-1/2 z-10">
@@ -947,9 +947,9 @@ const Navbar = () => {
               <Image
                 src="/assets/main/logo2.png"
                 alt="Company Logo"
-                width={100}
-                height={100}
-                className="w-36 h-36 lg:w-48 lg:h-48 object-contain hover:scale-110 transition-transform duration-300"
+                width={200}
+                height={200}
+                className="w-96 h-96 lg:w-96 -ml-15 lg:h-96 object-contain hover:scale-110 transition-transform duration-300"
               />
             </Link>
           </div>
@@ -1215,11 +1215,33 @@ const Navbar = () => {
               {isLoggedIn && (
                 <div className="flex space-x-4 text-center">
                   <div className="flex-1">
-                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-1">
-                      <span className="text-green-400 text-sm">📦</span>
-                    </div>
-                    <p className="text-white text-sm font-medium">Orders</p>
-                    <p className="text-slate-300 text-xs">Recent</p>
+<button
+  onClick={() => {
+    handleLogout();
+    setIsDrawerOpen(false);
+  }}
+  className="w-full flex items-center justify-center sm:justify-start space-x-2 sm:space-x-4 p-2 sm:p-4 rounded-xl bg-red-600/20 hover:bg-red-600/30 hover:translate-x-1 sm:hover:translate-x-2 transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
+>
+  {/* Mobile: Icon only, Desktop: Icon + Text */}
+  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center transition-transform">
+    <svg 
+      className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        strokeWidth={2} 
+        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+      />
+    </svg>
+  </div>
+  
+  {/* Text hidden on mobile, visible on sm and up */}
+  <span className="hidden sm:block text-red-600 font-medium">Logout</span>
+</button>
                   </div>
                   <div className="flex-1">
                     <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-1">
