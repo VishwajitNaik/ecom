@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDiYSLJHEKdemRZ35ekysI_l1krv1d04M0",
@@ -21,6 +22,12 @@ if (!getApps().length) {
 
 // Get messaging instance (only in browser)
 let messaging = null;
+
+// Get auth instance
+let auth = null;
+if (typeof window !== 'undefined') {
+  auth = getAuth(app);
+}
 
 export const initializeFirebaseMessaging = async () => {
   if (typeof window === 'undefined') {
@@ -167,4 +174,4 @@ export const removeFcmTokenFromBackend = async (fcmToken, authToken) => {
   }
 };
 
-export { app, messaging };
+export { app, messaging, auth };

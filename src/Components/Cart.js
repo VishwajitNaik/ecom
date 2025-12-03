@@ -1,33 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getUserFromToken } from '../lib/getUser';
+import { getUserFromToken, getGuestId } from '../lib/getUser';
 import toast from 'react-hot-toast';
 import CheckoutModal from './CheckoutModal';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+const PhoneOtpLogin = dynamic(() => import('./PhoneOtpLogin'), { ssr: false });
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchCart = async () => {
     const user = getUserFromToken();
-    if (!user) {
-      toast.error('Please login to view cart');
-      setIsLoading(false);
-      return;
-    }
-
+    const guestId = getGuestId();
     const token = localStorage.getItem('token');
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/cart/get', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId: user.id }),
+        headers,
+        body: JSON.stringify({ userId: user?.id || null, guestId: user?.id ? null : guestId }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -43,20 +40,25 @@ const Cart = () => {
   };
 
   useEffect(() => {
+    // Check if user is logged in
+    const user = getUserFromToken();
+    if (!user) {
+      setShowLogin(true);
+      setIsLoading(false);
+      return;
+    }
     fetchCart();
   }, []);
 
   const updateQuantity = async (cartId, newQuantity) => {
     if (newQuantity < 0) return;
-    
     const token = localStorage.getItem('token');
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/cart/update', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({ cartId, quantity: newQuantity }),
       });
       const data = await res.json();
@@ -74,12 +76,11 @@ const Cart = () => {
   const removeItem = async (cartId) => {
     const token = localStorage.getItem('token');
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/cart/update', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({ cartId, quantity: 0 }),
       });
       const data = await res.json();
@@ -348,6 +349,18 @@ const Cart = () => {
         items={cartItems}
         onOrderSuccess={handleOrderSuccess}
       />
+
+      {/* Phone OTP Login Modal */}
+      {showLogin && (
+        <PhoneOtpLogin
+          onSuccess={(user) => {
+            setShowLogin(false);
+            setIsLoading(true);
+            fetchCart(); // Refresh cart after login
+          }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </div>
   );
 };

@@ -2,24 +2,17 @@ import connectDB from '../../../../dbconfig/dbconfig';
 import Cart from '../../../../models/cart';
 import Product from '../../../../models/products';
 import ProductPack from '../../../../models/productPack';
-import { verifyToken, getTokenFromRequest } from '../../../../lib/verifyToken';
-
 export async function POST(request) {
   try {
-    const token = getTokenFromRequest(request);
-    if (!token) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const user = verifyToken(token);
-    if (!user) {
-      return Response.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     await connectDB();
-    const { userId } = await request.json();
+    const { userId, guestId } = await request.json();
+
+    // Build owner query: prefer userId, else guestId
+    const ownerQuery = userId ? { userId } : (guestId ? { guestId } : null);
+    if (!ownerQuery) return Response.json([]);
 
     // Get cart items without population first
-    const cartItems = await Cart.find({ userId });
+    const cartItems = await Cart.find(ownerQuery);
 
     // Manually populate based on itemType or detect by checking collections
     const populatedItems = await Promise.all(

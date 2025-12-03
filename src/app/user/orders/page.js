@@ -163,11 +163,14 @@ import { useState, useEffect, useRef } from 'react';
 import { getUserFromToken } from '../../../lib/getUser';
 import Navbar from '../../../Components/Navbar';
 import { gsap } from 'gsap';
+import dynamic from 'next/dynamic';
+const PhoneOtpLogin = dynamic(() => import('../../../Components/PhoneOtpLogin'), { ssr: false });
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
   const containerRef = useRef(null);
   const ordersRef = useRef([]);
   const hasAnimatedRef = useRef(false);
@@ -178,6 +181,7 @@ const OrdersPage = () => {
     if (currentUser) {
       fetchOrders();
     } else {
+      setShowLogin(true);
       setLoading(false);
     }
   }, []);
@@ -544,6 +548,18 @@ const OrdersPage = () => {
           )}
         </div>
       </main>
+
+      {/* Phone OTP Login Modal */}
+      {showLogin && (
+        <PhoneOtpLogin
+          onSuccess={(user) => {
+            setShowLogin(false);
+            setLoading(true);
+            fetchOrders(); // Refresh orders after login
+          }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </div>
   );
 };

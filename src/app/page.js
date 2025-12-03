@@ -252,25 +252,20 @@ import Hero from '../Components/Hero';
 import AboutUs from '../Components/AboutUs';
 import Services from '../Components/Services';
 import Contact from '../Components/Contact';
+import dynamic from 'next/dynamic';
+const PhoneOtpLogin = dynamic(() => import('../Components/PhoneOtpLogin'), { ssr: false });
+
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const heroRef = useRef(null);
-  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
 
-  useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      const userData = getUserFromToken();
-      setIsLoggedIn(true);
-      setUser(userData);
-    }
-  }, []);
+
+
+
 
   useEffect(() => {
     // Mobile-specific animations only
@@ -321,6 +316,8 @@ export default function Home() {
     }
   };
 
+
+
   return (
     <div className="font-sans text-gray-800 bg-white overflow-x-hidden">
       <Navbar />
@@ -345,19 +342,19 @@ export default function Home() {
             </div>
             
             <div className="flex flex-nowrap justify-center items-stretch gap-2 overflow-x-auto pb-1">
-                                <Link
-                    href="/user/SignIn"
-                    className="group bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-xl p-2 text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-teal-400/30 hover:border-teal-300/50 min-w-[85px] flex flex-col items-center justify-center"
-                    onClick={(e) => handleButtonClick(e.currentTarget)}
-                  >
-                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-200">
-                      <span className="text-sm">👤</span>
-                    </div>
-                    <h3 className="font-bold text-xs mb-0.5">SignIn</h3>
-                    <p className="text-teal-100 text-[9px] opacity-90">
-                      {user?.name?.split(' ')[0] || 'User'}
-                    </p>
-                  </Link>
+
+              {/* Login Button */}
+              <button
+                onClick={() => setShowLogin(true)}
+                className="group bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-xl p-2 text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-purple-400/30 hover:border-purple-300/50 min-w-[85px] flex flex-col items-center justify-center"
+              >
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-sm">🔐</span>
+                </div>
+                <h3 className="font-bold text-xs mb-0.5">Login</h3>
+                <p className="text-purple-100 text-[9px] opacity-90">Account</p>
+              </button>
+
               {/* Products Button */}
               <Link
                 href="/Products"
@@ -383,54 +380,6 @@ export default function Home() {
                 <h3 className="font-bold text-xs mb-0.5">Cart</h3>
                 <p className="text-green-100 text-[9px] opacity-90">View</p>
               </Link>
-
-              {/* Authentication Buttons */}
-              {!isLoggedIn ? (
-                <>
-                  {/* Sign In Button */}
-                  <Link
-                    href="/user/SignIn"
-                    className="group bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-xl p-2 text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-orange-400/30 hover:border-orange-300/50 min-w-[85px] flex flex-col items-center justify-center"
-                    onClick={(e) => handleButtonClick(e.currentTarget)}
-                  >
-                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-200">
-                      <span className="text-sm">🔑</span>
-                    </div>
-                    <h3 className="font-bold text-xs mb-0.5">Sign In</h3>
-                    <p className="text-orange-100 text-[9px] opacity-90">Access</p>
-                  </Link>
-
-                  {/* Sign Up Button */}
-                  <Link
-                    href="/user/SignUp"
-                    className="group bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-xl p-2 text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-purple-400/30 hover:border-purple-300/50 min-w-[85px] flex flex-col items-center justify-center"
-                    onClick={(e) => handleButtonClick(e.currentTarget)}
-                  >
-                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-200">
-                      <span className="text-sm">👤</span>
-                    </div>
-                    <h3 className="font-bold text-xs mb-0.5">Sign Up</h3>
-                    <p className="text-purple-100 text-[9px] opacity-90">Create</p>
-                  </Link>
-                </>
-              ) : (
-                /* User Profile Button when logged in */
-                <>
-
-                  {/* Orders Button for logged in users */}
-                  <Link
-                    href="/user/orders"
-                    className="group bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-2 text-center shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-2 border-indigo-400/30 hover:border-indigo-300/50 min-w-[85px] flex flex-col items-center justify-center"
-                    onClick={(e) => handleButtonClick(e.currentTarget)}
-                  >
-                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mb-1 group-hover:scale-110 transition-transform duration-200">
-                      <span className="text-sm">📦</span>
-                    </div>
-                    <h3 className="font-bold text-xs mb-0.5">Orders</h3>
-                    <p className="text-indigo-100 text-[9px] opacity-90">Track</p>
-                  </Link>
-                </>
-              )}
             </div>
           </div>
         </section>
@@ -623,15 +572,16 @@ export default function Home() {
   </div>
 </section>
 
+
         {/* AboutUs Section */}
-        <div>
+        {/* <div>
           <AboutUs />
-        </div>
+        </div> */}
 
         {/* Services Section */}
-        <div>
+        {/* <div>
           <Services />
-        </div>
+        </div> */}
 
         {/* Contact Section */}
         <div>
@@ -641,7 +591,7 @@ export default function Home() {
 
       {/* Floating Action Button - Smaller for mobile */}
       <div className="fixed bottom-4 right-4 z-50">
-        <button 
+        <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transform hover:scale-110 transition-all duration-200"
         >
@@ -650,6 +600,18 @@ export default function Home() {
           </svg>
         </button>
       </div>
+
+      {/* Phone OTP Login Modal */}
+      {showLogin && (
+        <PhoneOtpLogin
+          onSuccess={(user) => {
+            setShowLogin(false);
+            // Handle successful login - you can add any post-login logic here
+          }}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
+
     </div>
   );
 }

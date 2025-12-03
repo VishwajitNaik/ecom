@@ -5,7 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
-import { getUserFromToken } from '../../../lib/getUser';
+import { getUserFromToken, getGuestId } from '../../../lib/getUser';
+import dynamic from 'next/dynamic';
+const PhoneOtpLogin = dynamic(() => import('../../../Components/PhoneOtpLogin'), { ssr: false });
 import CheckoutModal from '../../../Components/CheckoutModal';
 import ReviewsSection from '../../../Components/ReviewsSection';
 
@@ -68,6 +70,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showLogin, setShowLogin] = useState(false);
 
   const productRef = useRef(null);
   const imageGalleryRef = useRef(null);
@@ -121,21 +124,17 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     const user = getUserFromToken();
-    if (!user) {
-      toast.error('Please login to add to cart');
-      return;
-    }
-
+    const guestId = getGuestId();
     const token = localStorage.getItem('token');
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/cart', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({
-          userId: user.id,
+          userId: user?.id || null,
+          guestId: user?.id ? null : guestId,
           productId: product._id,
           quantity: parseInt(quantity),
           itemType: 'product',
@@ -154,11 +153,12 @@ export default function ProductDetail() {
 
   const handleBuyNow = () => {
     const user = getUserFromToken();
-    if (!user) {
-      toast.error('Please login to buy now');
+    if (user) {
+      setShowCheckout(true);
       return;
     }
-    setShowCheckout(true);
+    // Show OTP login for guests
+    setShowLogin(true);
   };
 
   const handleOrderSuccess = () => {
@@ -208,6 +208,9 @@ export default function ProductDetail() {
 
   return (
     <>
+      {showLogin && (
+        <PhoneOtpLogin onSuccess={() => { setShowLogin(false); setShowCheckout(true); }} onClose={() => setShowLogin(false)} />
+      )}
       <div ref={productRef} className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-7xl mx-auto">
 

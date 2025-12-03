@@ -22,7 +22,7 @@
 //   const drawerRef = useRef(null);
 //   const backdropRef = useRef(null);
 //   const adminDropdownRef = useRef(null);
-  
+
 
 //   useEffect(() => {
 //     const token = localStorage.getItem('token');
@@ -842,7 +842,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (adminDropdownRef.current && !adminDropdownRef.current.contains(event.target) &&
-          !event.target.closest('[data-admin-toggle]')) {
+        !event.target.closest('[data-admin-toggle]')) {
         setIsAdminDropdownOpen(false);
       }
     };
@@ -943,15 +943,22 @@ const Navbar = () => {
         <div className="container mx-auto flex justify-between items-center relative">
           {/* Logo positioned absolutely and larger */}
           <div ref={logoRef} className="absolute top-1/2 transform -translate-y-1/2 z-10">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/assets/main/logo2.png"
-                alt="Company Logo"
-                width={200}
-                height={200}
-                className="w-96 h-96 lg:w-96 -ml-15 lg:h-96 object-contain hover:scale-110 transition-transform duration-300"
-              />
-            </Link>
+            <div className="bg-transparent p-0 m-0">
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/assets/main/logo2.png"
+                  alt="Company Logo"
+                  width={100}
+                  height={100}
+                  className="w-72 h-64 lg:w-36 -ml-10 lg:h-36 object-contain hover:scale-110 transition-transform duration-300"
+                  style={{
+                    filter: 'none',
+                    backgroundColor: 'transparent',
+                    mixBlendMode: 'normal'
+                  }}
+                />
+              </Link>
+            </div>
           </div>
 
           {/* Spacer to account for absolute positioned logo */}
@@ -1172,8 +1179,8 @@ const Navbar = () => {
           ></div>
 
           {/* Enhanced Drawer with Modern Design */}
-          <div 
-            ref={drawerRef} 
+          <div
+            ref={drawerRef}
             className="fixed right-0 top-0 h-full w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transform transition-all duration-500 ease-out overflow-hidden"
             style={{
               boxShadow: '-10px 0 50px rgba(0, 0, 0, 0.3)'
@@ -1215,33 +1222,33 @@ const Navbar = () => {
               {isLoggedIn && (
                 <div className="flex space-x-4 text-center">
                   <div className="flex-1">
-<button
-  onClick={() => {
-    handleLogout();
-    setIsDrawerOpen(false);
-  }}
-  className="w-full flex items-center justify-center sm:justify-start space-x-2 sm:space-x-4 p-2 sm:p-4 rounded-xl bg-red-600/20 hover:bg-red-600/30 hover:translate-x-1 sm:hover:translate-x-2 transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
->
-  {/* Mobile: Icon only, Desktop: Icon + Text */}
-  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center transition-transform">
-    <svg 
-      className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
-      />
-    </svg>
-  </div>
-  
-  {/* Text hidden on mobile, visible on sm and up */}
-  <span className="hidden sm:block text-red-600 font-medium">Logout</span>
-</button>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsDrawerOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center sm:justify-start space-x-2 sm:space-x-4 p-2 sm:p-4 rounded-xl bg-red-600/20 hover:bg-red-600/30 hover:translate-x-1 sm:hover:translate-x-2 transition-all duration-300 border border-red-500/30 hover:border-red-400/50"
+                    >
+                      {/* Mobile: Icon only, Desktop: Icon + Text */}
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500/20 rounded-lg flex items-center justify-center transition-transform">
+                        <svg
+                          className="w-4 h-4 sm:w-5 sm:h-5 text-red-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Text hidden on mobile, visible on sm and up */}
+                      <span className="hidden sm:block text-red-600 font-medium">Logout</span>
+                    </button>
                   </div>
                   <div className="flex-1">
                     <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-1">
@@ -1291,6 +1298,15 @@ const Navbar = () => {
                       <span className="text-yellow-400 text-lg">🛒</span>
                     </div>
                     <span className="text-white font-medium flex-1">Cart</span>
+                    <span className="text-slate-400 group-hover:text-white transition-colors">→</span>
+                  </Link>
+                </li>
+                <li className="group">
+                  <Link href="/user/orders" className="flex items-center space-x-4 p-4 rounded-xl bg-slate-800/50 hover:bg-yellow-600/20 hover:translate-x-2 transition-all duration-300 border border-slate-700/50 hover:border-yellow-500/30" onClick={() => setIsDrawerOpen(false)}>
+                    <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <span className="text-yellow-400 text-lg"></span>
+                    </div>
+                    <span className="text-white font-medium flex-1">My Orders</span>
                     <span className="text-slate-400 group-hover:text-white transition-colors">→</span>
                   </Link>
                 </li>
@@ -1380,33 +1396,8 @@ const Navbar = () => {
                 ) : (
                   /* Authentication Section for Non-Logged In Users */
                   <>
-                    <li className="mt-6 mb-3">
-                      <div className="flex items-center space-x-3 px-4 py-2">
-                        <div className="w-2 h-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full animate-pulse"></div>
-                        <span className="text-emerald-400 font-bold text-sm uppercase tracking-wider">Authentication</span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-green-500/20 to-transparent"></div>
-                      </div>
-                    </li>
 
-                    <li className="group">
-                      <Link href="/user/SignIn" className="flex items-center space-x-4 p-4 rounded-xl bg-slate-800/50 hover:bg-emerald-600/20 hover:translate-x-2 transition-all duration-300 border border-slate-700/50 hover:border-emerald-500/30" onClick={() => setIsDrawerOpen(false)}>
-                        <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <span className="text-emerald-400 text-lg">🔑</span>
-                        </div>
-                        <span className="text-white font-medium flex-1">Sign In</span>
-                        <span className="text-slate-400 group-hover:text-white transition-colors">→</span>
-                      </Link>
-                    </li>
 
-                    <li className="group">
-                      <Link href="/user/SignUp" className="flex items-center space-x-4 p-4 rounded-xl bg-slate-800/50 hover:bg-blue-600/20 hover:translate-x-2 transition-all duration-300 border border-slate-700/50 hover:border-blue-500/30" onClick={() => setIsDrawerOpen(false)}>
-                        <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <span className="text-blue-400 text-lg">👤</span>
-                        </div>
-                        <span className="text-white font-medium flex-1">Sign Up</span>
-                        <span className="text-slate-400 group-hover:text-white transition-colors">→</span>
-                      </Link>
-                    </li>
                   </>
                 )}
               </ul>
@@ -1431,4 +1422,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

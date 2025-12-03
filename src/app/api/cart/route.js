@@ -2,28 +2,27 @@ import connectDB from '../../../dbconfig/dbconfig';
 import Cart from '../../../models/cart';
 import Product from '../../../models/products';
 import ProductPack from '../../../models/productPack';
-import { verifyToken, getTokenFromRequest } from '../../../lib/verifyToken';
+// No authentication required for adding to cart anymore. Frontend may send `userId` or `null`.
 
 export async function POST(request) {
   try {
-    const token = getTokenFromRequest(request);
-    if (!token) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const user = verifyToken(token);
-    if (!user) {
-      return Response.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     await connectDB();
-    const { userId, productId, quantity = 1, itemType = 'product' } = await request.json();
+    const { userId, guestId, productId, quantity = 1, itemType = 'product' } = await request.json();
+
+    // ownerQuery decides whether to use userId (logged-in) or guestId (guest browser)
+    const ownerQuery = userId ? { userId } : (guestId ? { guestId } : {});
+
+    // If no owner info provided, refuse to proceed to avoid creating global null-owner items
+    if (!ownerQuery.userId && !ownerQuery.guestId) {
+      return Response.json({ error: 'Missing userId or guestId' }, { status: 400 });
+    }
 
     // Check if already in cart - handle both old and new formats
     let item;
     if (itemType === 'product') {
       // For products, check both old and new format
       item = await Cart.findOne({
-        userId,
+        ...ownerQuery,
         $or: [
           { itemId: productId, itemType: 'product' },
           { productId: productId, $or: [{ itemType: { $exists: false } }, { itemType: 'product' }] }
@@ -31,7 +30,7 @@ export async function POST(request) {
       });
     } else {
       // For product packs, use new format
-      item = await Cart.findOne({ userId, itemId: productId, itemType });
+      item = await Cart.findOne({ ...ownerQuery, itemId: productId, itemType });
     }
 
     if (item) {
@@ -47,7 +46,8 @@ export async function POST(request) {
 
     // Add new item
     item = await Cart.create({
-      userId,
+      userId: userId || undefined,
+      guestId: guestId || undefined,
       itemId: productId,
       itemType,
       quantity,

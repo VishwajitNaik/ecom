@@ -241,23 +241,24 @@ const Footer = () => {
       </div>
 
       {/* Floating WhatsApp Button - Mobile Only */}
-      <div className="fixed bottom-6 right-6 z-50 sm:hidden">
-        <a
-          href="https://wa.me/918308083842"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 animate-bounce"
-        >
-          <svg
-            className="w-8 h-8 text-white"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967...etc" />
-          </svg>
-        </a>
-
-      </div>
+<div className="fixed bottom-6 right-6 z-50 sm:hidden">
+  <a
+    href="https://wa.me/918308083842"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 animate-bounce"
+    aria-label="Chat on WhatsApp"
+  >
+    <svg
+      className="w-8 h-8 text-white"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      {/* WhatsApp official logo path */}
+      <path d="M12.032 2c-5.509 0-9.974 4.486-9.974 10.019 0 2.037.6 3.991 1.741 5.657L2 22l4.204-1.101c1.665.913 3.581 1.444 5.609 1.444 5.509 0 9.974-4.486 9.974-10.019S17.541 2 12.032 2zm5.15 14.295c-.252.688-1.404 1.287-1.95 1.311-.426.018-.96.007-1.398-.222-.359-.185-.805-.435-1.398-.735-2.503-1.074-4.137-3.607-4.264-3.771-.127-.164-1.053-1.407-1.053-2.675 0-1.268.638-1.893.868-2.163.229-.27.495-.337.66-.337.164 0 .33 0 .475.008.143.006.33-.07.515.495.185.565.632 1.955.688 2.097.056.143.094.309.019.474-.075.164-.112.247-.224.38-.112.133-.235.297-.336.396-.112.112-.229.247-.098.478.132.23.594.997 1.274 1.613.873.787 1.614 1.048 1.855 1.157.24.11.384.094.525-.056.141-.15.604-.66.765-.887.161-.228.322-.19.537-.113.214.077 1.36.641 1.594.757.234.116.39.174.447.273.056.099.056.564-.197 1.252z"/>
+    </svg>
+  </a>
+</div>
     </footer>
   );
 };

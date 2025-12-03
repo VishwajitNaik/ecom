@@ -574,7 +574,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { getUserFromToken } from '../lib/getUser';
+import { getUserFromToken, getGuestId } from '../lib/getUser';
 import toast from 'react-hot-toast';
 
 const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
@@ -597,6 +597,8 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
   });
 
   const user = useMemo(() => getUserFromToken(), []);
+  const guestId = useMemo(() => getGuestId(), []);
+  const [purchaserPhone, setPurchaserPhone] = useState(null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -605,6 +607,35 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
       setIsProcessing(false);
       setLoadingAddresses(false);
     }
+  }, [isOpen, user]);
+
+  // Fetch purchaser phone (if any) so we can attach it to orders
+  useEffect(() => {
+    if (!isOpen || !user) return;
+    // Try localStorage first (set by PhoneOtpLogin after verification)
+    try {
+      const stored = localStorage.getItem('userPhone');
+      if (stored) setPurchaserPhone(stored);
+    } catch (e) {
+      // ignore storage errors
+    }
+
+    // Then try to refresh from backend when possible
+    (async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch(`/api/users/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.phone) setPurchaserPhone(data.phone);
+        }
+      } catch (e) {
+        console.error('Failed to fetch purchaser phone', e);
+      }
+    })();
   }, [isOpen, user]);
 
   // Load Razorpay script
@@ -847,9 +878,10 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
 
     setIsProcessing(true);
 
-    // Prepare order data
+    // Prepare order data (guest allowed: userId may be null)
     const orderData = {
-      userId: user.id,
+      userId: user?.id || null,
+      guestId: user?.id ? null : guestId,
       items: items.map(item => ({
         itemId: item.itemId || item.productId._id,
         itemType: item.itemType || 'product',
@@ -877,6 +909,8 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
       discount,
       total,
       couponCode: appliedDiscount > 0 ? coupon : null,
+      // Verified buyer phone provided from frontend (user created via OTP)
+      buyerPhoneFromFront: purchaserPhone || null,
     };
 
     if (paymentMethod === 'Razorpay') {
@@ -887,12 +921,11 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
     // Handle COD order
     const token = localStorage.getItem('token');
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const res = await fetch('/api/order/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify(orderData),
       });
       const data = await res.json();
@@ -913,7 +946,7 @@ const CheckoutModal = ({ isOpen, onClose, items, onOrderSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 mt-25 text-gray-800 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-t-2xl">

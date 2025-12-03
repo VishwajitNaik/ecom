@@ -4,7 +4,12 @@ const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
+  },
+  guestId: {
+    type: String,
+    required: false,
+    index: true,
   },
   items: [
     {
@@ -94,6 +99,13 @@ const orderSchema = new mongoose.Schema({
   total: {
     type: Number,
     required: true,
+  },
+  // Phone number of the purchaser (verified via OTP when available).
+  // This helps identify orders when `guestId` changes.
+  buyerPhone: {
+    type: String,
+    required: false,
+    index: true,
   },
 }, {
   timestamps: true,
