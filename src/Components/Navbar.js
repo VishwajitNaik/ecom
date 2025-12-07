@@ -942,24 +942,21 @@ const Navbar = () => {
       <nav ref={navbarRef} className="shadow-lg shadow-gray-600 shadow-inset bg-gradient-to-r from-white to-gray-800 p-4 mx-5 my-5 rounded-xl relative z-[9999]">
         <div className="container mx-auto flex justify-between items-center relative">
           {/* Logo positioned absolutely and larger */}
-          <div ref={logoRef} className="absolute top-1/2 transform -translate-y-1/2 z-10">
-            <div className="bg-transparent p-0 m-0">
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/assets/main/logo2.png"
-                  alt="Company Logo"
-                  width={100}
-                  height={100}
-                  className="w-72 h-64 lg:w-36 -ml-10 lg:h-36 object-contain hover:scale-110 transition-transform duration-300"
-                  style={{
-                    filter: 'none',
-                    backgroundColor: 'transparent',
-                    mixBlendMode: 'normal'
-                  }}
-                />
-              </Link>
-            </div>
-          </div>
+<div className="absolute top-1/2 transform -translate-y-1/2 z-10">
+  <div className="bg-transparent p-0 m-0">
+    <Link href="/" className="flex items-center">
+      <img
+        src="/assets/main/logo3.png"
+        alt="Company Logo"
+        className="w-64 md:w-72 lg:w-80 xl:w-96 mt-5 -ml-10 h-auto object-contain hover:scale-110 transition-transform duration-300"
+        style={{
+          filter: 'none',
+          backgroundColor: 'transparent',
+        }}
+      />
+    </Link>
+  </div>
+</div>
 
           {/* Spacer to account for absolute positioned logo */}
           <div className="w-16 lg:w-20"></div>
