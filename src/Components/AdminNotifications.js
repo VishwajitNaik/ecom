@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import {
   requestNotificationPermission,
   saveFcmTokenToBackend,
-  initializeFirebaseMessaging,
+  messaging,
   onForegroundMessage
 } from '../lib/firebase';
 
@@ -27,7 +27,7 @@ export default function AdminNotifications() {
 
     // Play notification sound
     try {
-      const audio = new Audio('/notification.mp3');
+      const audio = new Audio('/mixkit-software-interface-back-2575.wav');
       audio.volume = 0.5;
       audio.play().catch(() => {});
     } catch (e) {
@@ -88,10 +88,9 @@ export default function AdminNotifications() {
         // Check if already registered
         const existingToken = localStorage.getItem('fcmToken');
         
-        // Initialize messaging
-        console.log('Initializing Firebase Messaging...');
-        const messaging = await initializeFirebaseMessaging();
-        console.log('Messaging initialized:', !!messaging);
+        // Check if messaging is available
+        console.log('Checking Firebase Messaging...');
+        console.log('Messaging available:', !!messaging);
         setDebugInfo(prev => prev + '\nMessaging: ' + (messaging ? 'OK' : 'Failed'));
         
         // Check notification permission status
@@ -126,36 +125,19 @@ export default function AdminNotifications() {
 
   // Listen for foreground messages
   useEffect(() => {
-    let unsubscribe = () => {};
-
-    const setupForegroundListener = async () => {
-      await initializeFirebaseMessaging();
-      
-      const { onMessage } = await import('firebase/messaging');
-      const { getMessaging } = await import('firebase/messaging');
-      const { getApps } = await import('firebase/app');
-      
-      if (getApps().length > 0) {
-        try {
-          const messaging = getMessaging();
-          unsubscribe = onMessage(messaging, (payload) => {
-            console.log('Foreground message:', payload);
-            showNotificationToast(
-              payload.notification?.title || 'New Notification',
-              payload.notification?.body || ''
-            );
-          });
-        } catch (error) {
-          console.error('Error setting up foreground listener:', error);
-        }
-      }
-    };
-
-    if (typeof window !== 'undefined' && Notification.permission === 'granted') {
-      setupForegroundListener();
+    if (typeof window === 'undefined' || !messaging || Notification.permission !== 'granted') {
+      return;
     }
 
-    return () => unsubscribe();
+    const unsubscribe = onForegroundMessage((payload) => {
+      console.log('Foreground message:', payload);
+      showNotificationToast(
+        payload.notification?.title || 'New Notification',
+        payload.notification?.body || ''
+      );
+    });
+
+    return unsubscribe;
   }, [showNotificationToast]);
 
   // Don't render anything if not admin or notifications not supported

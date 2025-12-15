@@ -581,7 +581,7 @@ export default function UserDetailPage() {
             <div className="relative">
               <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
                 <span className="text-3xl font-bold text-white">
-                  {user.name.charAt(0).toUpperCase()}
+                  {user.name ? user.name.charAt(0).toUpperCase() : user.phone ? user.phone.slice(-1).toUpperCase() : 'U'}
                 </span>
               </div>
               <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-lg border">

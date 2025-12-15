@@ -53,14 +53,14 @@ export async function GET(request) {
     // Try to fetch user's phone from DB to match orders that were created as guests
     let purchaserPhone = null;
     try {
-      const purchaser = await User.findById(user.id);
+      const purchaser = await User.findById(user.userId);
       purchaserPhone = purchaser?.phone || null;
     } catch (e) {
       console.error('Failed to lookup purchaser phone:', e);
     }
 
     // Build OR clauses dynamically: userId, buyerPhone
-    const orClauses = [{ userId: user.id }];
+    const orClauses = [{ userId: user.userId }];
     if (purchaserPhone) orClauses.push({ buyerPhone: purchaserPhone });
 
     const query = { $or: orClauses };

@@ -23,7 +23,7 @@ export async function POST(request) {
     // Generate JWT token
     const token = jwt.sign({ id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    return Response.json({ message: 'Login successful', token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
+    return Response.json({ message: 'Login successful', token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role } });
   } catch (error) {
     return Response.json({ error: 'Login failed' }, { status: 500 });
   }

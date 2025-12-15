@@ -6,8 +6,7 @@ import Image from 'next/image';
 import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 import { getUserFromToken, getGuestId } from '../../../lib/getUser';
-import dynamic from 'next/dynamic';
-const PhoneOtpLogin = dynamic(() => import('../../../Components/PhoneOtpLogin'), { ssr: false });
+
 import CheckoutModal from '../../../Components/CheckoutModal';
 
 export default function ProductPackDetail() {
@@ -17,7 +16,7 @@ export default function ProductPackDetail() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
+
   const productRef = useRef(null);
 
   useEffect(() => {
@@ -88,7 +87,9 @@ export default function ProductPackDetail() {
       setShowCheckout(true);
       return;
     }
-    setShowLogin(true);
+    // Guests need to login first
+    toast.error('Please login to place an order');
+    router.push('/user/SignIn');
   };
 
   const handleOrderSuccess = () => {
@@ -124,9 +125,6 @@ export default function ProductPackDetail() {
 
   return (
     <>
-      {showLogin && (
-        <PhoneOtpLogin onSuccess={() => { setShowLogin(false); setShowCheckout(true); }} onClose={() => setShowLogin(false)} />
-      )}
       <div ref={productRef} className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Back Button */}

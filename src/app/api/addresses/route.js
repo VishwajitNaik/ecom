@@ -14,7 +14,7 @@ export async function GET(request) {
     }
 
     await connectDB();
-    const addresses = await Address.find({ userId: user.id }).sort({ createdAt: -1 });
+    const addresses = await Address.find({ userId: user.userId }).sort({ createdAt: -1 });
     return Response.json(addresses);
   } catch (error) {
     return Response.json({ error: 'Failed to fetch addresses' }, { status: 500 });
@@ -37,10 +37,10 @@ export async function POST(request) {
 
     // If setting as default, unset other defaults
     if (addressData.isDefault) {
-      await Address.updateMany({ userId: user.id }, { isDefault: false });
+      await Address.updateMany({ userId: user.userId }, { isDefault: false });
     }
 
-    const address = await Address.create({ ...addressData, userId: user.id });
+    const address = await Address.create({ ...addressData, userId: user.userId });
     return Response.json(address);
   } catch (error) {
     return Response.json({ error: 'Failed to create address' }, { status: 500 });

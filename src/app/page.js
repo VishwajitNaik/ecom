@@ -252,8 +252,11 @@ import Hero from '../Components/Hero';
 import AboutUs from '../Components/AboutUs';
 import Services from '../Components/Services';
 import Contact from '../Components/Contact';
+import Product from '../Components/Product';
+import CheckoutModal from '../Components/CheckoutModal';
 import dynamic from 'next/dynamic';
-const PhoneOtpLogin = dynamic(() => import('../Components/PhoneOtpLogin'), { ssr: false });
+
+const OtpLogin = dynamic(() => import('../Components/OtpLogin'), { ssr: false });
 
 
 // Register ScrollTrigger plugin
@@ -262,25 +265,60 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const heroRef = useRef(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [productPacks, setProductPacks] = useState([]);
+  const [allItems, setAllItems] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [showCheckout, setShowCheckout] = useState(false);
 
 
 
 
 
   useEffect(() => {
+    // Fetch products on component mount
+    const fetchProducts = async () => {
+      try {
+        const [productsRes, packsRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/productPacks')
+        ]);
+
+        const productsData = await productsRes.json();
+        const packsData = await packsRes.json();
+
+        setProducts(productsData);
+        setProductPacks(packsData);
+
+        // Combine and mark types
+        const combined = [
+          ...productsData.map(p => ({ ...p, itemType: 'product' })),
+          ...packsData.map(p => ({ ...p, itemType: 'productPack' }))
+        ];
+        setAllItems(combined);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
     // Mobile-specific animations only
     const isMobile = window.innerWidth < 768;
-    
+
     if (!isMobile) return; // Skip animations for desktop
 
     // Initialize GSAP animations for mobile only
     const ctx = gsap.context(() => {
       // Hero section animation - very quick for mobile
-      gsap.fromTo(heroRef.current, 
+      gsap.fromTo(heroRef.current,
         { opacity: 0, y: 20 },
-        { 
-          opacity: 1, 
-          y: 0, 
+        {
+          opacity: 1,
+          y: 0,
           duration: 0.6, // Faster duration
           ease: "power2.out"
         }
@@ -314,6 +352,32 @@ export default function Home() {
         }
       );
     }
+  };
+
+  // Handle Buy Now from any product
+  const handleBuyNow = (product, quantity) => {
+    const user = getUserFromToken();
+    if (user) {
+      setSelectedProduct(product);
+      setSelectedQuantity(quantity);
+      setShowCheckout(true);
+      return;
+    }
+    // Guests need to login first - show OTP login modal
+    setShowLogin(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    if (selectedProduct) {
+      setShowCheckout(true);
+    }
+  };
+
+  const handleOrderSuccess = () => {
+    setShowCheckout(false);
+    setSelectedProduct(null);
+    setSelectedQuantity(1);
   };
 
 
@@ -383,6 +447,56 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Featured Products Section */}
+        {allItems.length > 0 && (
+          <section className="py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+            <div className="container mx-auto px-4">
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-blue-200/50 mb-4">
+                  <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+                    ✨ Featured Products
+                  </span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-transparent bg-clip-text mb-4">
+                  Shop Our Best Sellers
+                </h2>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                  Discover our most popular products, carefully selected for quality and customer satisfaction.
+                </p>
+              </div>
+
+              {/* Products Grid - Show first 6 products */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8">
+                {allItems.slice(0, 6).map((product, index) => (
+                  <div key={`${product.itemType}-${product._id}`} className="transform hover:scale-105 transition-transform duration-300">
+                    <Product
+                      product={product}
+                      index={index}
+                      onBuyNow={handleBuyNow}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* View All Button */}
+              <div className="text-center">
+                <Link
+                  href="/Products"
+                  className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl px-8 py-4 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700"
+                >
+                  <span>View All Products</span>
+                  <span className="text-lg">🛍️</span>
+                  <span className="bg-white/20 rounded-full px-3 py-1 text-sm">
+                    {allItems.length} items
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
 
         {/* Welcome Section - Compact for mobile */}
 <section 
@@ -601,16 +715,25 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Phone OTP Login Modal */}
+      {/* OTP Login Modal */}
       {showLogin && (
-        <PhoneOtpLogin
-          onSuccess={(user) => {
-            setShowLogin(false);
-            // Handle successful login - you can add any post-login logic here
-          }}
+        <OtpLogin
+          onSuccess={() => setShowLogin(false)}
           onClose={() => setShowLogin(false)}
         />
       )}
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        items={selectedProduct ? [{
+          productId: selectedProduct,
+          quantity: selectedQuantity,
+          itemType: selectedProduct.itemType
+        }] : []}
+        onOrderSuccess={handleOrderSuccess}
+      />
 
     </div>
   );

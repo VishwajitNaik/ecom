@@ -6,10 +6,12 @@ import Image from 'next/image';
 import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 import { getUserFromToken, getGuestId } from '../../../lib/getUser';
-import dynamic from 'next/dynamic';
-const PhoneOtpLogin = dynamic(() => import('../../../Components/PhoneOtpLogin'), { ssr: false });
+
 import CheckoutModal from '../../../Components/CheckoutModal';
 import ReviewsSection from '../../../Components/ReviewsSection';
+import dynamic from 'next/dynamic';
+
+const OtpLogin = dynamic(() => import('../../../Components/OtpLogin'), { ssr: false });
 
 // Helper functions
 const getStockStatus = (stock) => {
@@ -157,8 +159,13 @@ export default function ProductDetail() {
       setShowCheckout(true);
       return;
     }
-    // Show OTP login for guests
+    // Guests need to login first - show OTP login modal
     setShowLogin(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    setShowCheckout(true);
   };
 
   const handleOrderSuccess = () => {
@@ -208,9 +215,6 @@ export default function ProductDetail() {
 
   return (
     <>
-      {showLogin && (
-        <PhoneOtpLogin onSuccess={() => { setShowLogin(false); setShowCheckout(true); }} onClose={() => setShowLogin(false)} />
-      )}
       <div ref={productRef} className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-7xl mx-auto">
 
@@ -492,6 +496,14 @@ export default function ProductDetail() {
         items={[{ productId: product, quantity, itemType: 'product' }]}
         onOrderSuccess={handleOrderSuccess}
       />
+
+      {/* OTP Login Modal */}
+      {showLogin && (
+        <OtpLogin
+          onSuccess={handleLoginSuccess}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </>
   );
 }

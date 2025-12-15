@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import CheckoutModal from './CheckoutModal';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-const PhoneOtpLogin = dynamic(() => import('./PhoneOtpLogin'), { ssr: false });
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -349,18 +348,6 @@ const Cart = () => {
         items={cartItems}
         onOrderSuccess={handleOrderSuccess}
       />
-
-      {/* Phone OTP Login Modal */}
-      {showLogin && (
-        <PhoneOtpLogin
-          onSuccess={(user) => {
-            setShowLogin(false);
-            setIsLoading(true);
-            fetchCart(); // Refresh cart after login
-          }}
-          onClose={() => setShowLogin(false)}
-        />
-      )}
     </div>
   );
 };

@@ -211,7 +211,7 @@ const ReviewsSection = ({ productId }) => {
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-blue-600 font-semibold">
-                        {review.user.name.charAt(0).toUpperCase()}
+                        {review.user.name ? review.user.name.charAt(0).toUpperCase() : review.user.phone ? review.user.phone.slice(-1).toUpperCase() : 'U'}
                       </span>
                     </div>
                     <div>

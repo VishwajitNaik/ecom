@@ -17,10 +17,10 @@ export async function POST(request) {
 
     await connectDB();
     const { productId } = await request.json();
-    console.log('Checking review eligibility for user:', user.id, 'product:', productId);
+    console.log('Checking review eligibility for user:', user.userId, 'product:', productId);
 
     // First, let's see all orders for this user
-    const allUserOrders = await Order.find({ userId: user.id });
+    const allUserOrders = await Order.find({ userId: user.userId });
     console.log('All orders for user:', allUserOrders.map(o => ({
       id: o._id,
       status: o.orderStatus,
@@ -29,7 +29,7 @@ export async function POST(request) {
 
     // Check if user has purchased and received the product
     const order = await Order.findOne({
-      userId: user.id,
+      userId: user.userId,
       'items.itemId': productId,
       orderStatus: { $regex: /^delivered$/i } // Case-insensitive match
     });
@@ -51,7 +51,7 @@ export async function POST(request) {
       console.log('Order contains target product:', hasProduct);
     } else {
       console.log('No order found with criteria:', {
-        userId: user.id,
+        userId: user.userId,
         'items.itemId': productId,
         orderStatus: 'delivered (case-insensitive)'
       });
@@ -66,7 +66,7 @@ export async function POST(request) {
 
     // Check if user already reviewed this product
     const existingReview = await Review.findOne({
-      userId: user.id,
+      userId: user.userId,
       productId: productId
     });
 

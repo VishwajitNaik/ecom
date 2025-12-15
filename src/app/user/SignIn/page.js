@@ -6,6 +6,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { gsap } from 'gsap';
 import Navbar from '../../../Components/Navbar';
+import { generateAndSaveFCMToken } from '../../../lib/generateFCMToken';
 
 export default function SignIn() {
   const router = useRouter();
@@ -93,7 +94,12 @@ export default function SignIn() {
         // Set cookie for middleware (secure in production)
         const isProduction = process.env.NODE_ENV === 'production';
         document.cookie = `token=${data.token}; path=/; max-age=604800; samesite=strict${isProduction ? '; secure' : ''}`;
-        
+
+        // Generate FCM token for admins
+        if (data.user && data.user.role === 'admin') {
+          generateAndSaveFCMToken();
+        }
+
         // Success animation
         gsap.to(formRef.current, {
           scale: 1.02,

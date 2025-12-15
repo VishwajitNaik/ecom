@@ -377,7 +377,7 @@ const Hero = () => {
               image: item.image || "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1200&h=800&fit=crop",
               title: item.title || `Slide ${index + 1}`,
               subtitle: item.description || "Welcome to Ecom Store",
-              cta: item.link ? "Shop Now" : "Explore",
+              cta: item.link ? "Explore" : "Shop Now",
               link: item.link,
               overlay: index % 4 === 0 ? "from-green-900/60 via-green-800/40 to-transparent" :
                       index % 4 === 1 ? "from-blue-900/60 via-blue-800/40 to-transparent" :
@@ -572,7 +572,7 @@ const Hero = () => {
   return (
     <section 
       ref={containerRef} 
-      className="relative h-[40vh] md:h-screen -mt-28 overflow-hidden bg-gray-900"
+      className="relative h-[50vh] mt-0 md:h-screen -mt-28 overflow-hidden bg-gray-900"
     >
       {/* Background Carousel */}
       <div ref={carouselRef} className="absolute inset-0">

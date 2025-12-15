@@ -20,7 +20,7 @@ export async function GET(request) {
 
     // Find all delivered orders for this user
     const deliveredOrders = await Order.find({
-      userId: user.id,
+      userId: user.userId,
       orderStatus: 'delivered'
     }).populate({
       path: 'items.itemId',
@@ -35,7 +35,7 @@ export async function GET(request) {
       for (const item of order.items) {
         // Check if this product has already been reviewed by this user
         const existingReview = await Review.findOne({
-          userId: user.id,
+          userId: user.userId,
           productId: item.itemId._id || item.itemId,
           orderId: order._id
         });

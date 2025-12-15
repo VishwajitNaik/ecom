@@ -21,7 +21,7 @@ export async function POST(request) {
     // Verify the order exists and belongs to the user
     const order = await Order.findOne({
       _id: orderId,
-      userId: user.id,
+      userId: user.userId,
       orderStatus: 'delivered'
     });
 
@@ -45,7 +45,7 @@ export async function POST(request) {
 
     // Try to find existing review for this order
     let review = await Review.findOne({
-      userId: user.id,
+      userId: user.userId,
       productId: productId,
       orderId: orderId
     });
@@ -58,7 +58,7 @@ export async function POST(request) {
     } else {
       // Check for old reviews without orderId and update them
       const oldReview = await Review.findOne({
-        userId: user.id,
+        userId: user.userId,
         productId: productId,
         $or: [
           { orderId: { $exists: false } },
@@ -76,7 +76,7 @@ export async function POST(request) {
       } else {
         // Create completely new review
         review = new Review({
-          userId: user.id,
+          userId: user.userId,
           productId,
           orderId,
           rating: parseInt(rating),

@@ -265,6 +265,11 @@ import Product from '../../Components/Product';
 import Navbar from '../../Components/Navbar';
 import Image from 'next/image';
 import CheckoutModal from '../../Components/CheckoutModal';
+import dynamic from 'next/dynamic';
+import { getUserFromToken } from '../../lib/getUser';
+import toast from 'react-hot-toast';
+
+const OtpLogin = dynamic(() => import('../../Components/OtpLogin'), { ssr: false });
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -273,6 +278,7 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   
   const containerRef = useRef(null);
   const productsScrollRef = useRef(null);
@@ -369,9 +375,22 @@ export default function ProductsPage() {
 
   // Handle Buy Now from any product
   const handleBuyNow = (product, quantity) => {
-    setSelectedProduct(product);
-    setSelectedQuantity(quantity);
-    setShowCheckout(true);
+    const user = getUserFromToken();
+    if (user) {
+      setSelectedProduct(product);
+      setSelectedQuantity(quantity);
+      setShowCheckout(true);
+      return;
+    }
+    // Guests need to login first - show OTP login modal
+    setShowLogin(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+    if (selectedProduct) {
+      setShowCheckout(true);
+    }
   };
 
   const handleOrderSuccess = () => {
@@ -583,13 +602,21 @@ export default function ProductsPage() {
       <CheckoutModal
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
-        items={selectedProduct ? [{ 
-          productId: selectedProduct, 
-          quantity: selectedQuantity, 
-          itemType: selectedProduct.itemType 
+        items={selectedProduct ? [{
+          productId: selectedProduct,
+          quantity: selectedQuantity,
+          itemType: selectedProduct.itemType
         }] : []}
         onOrderSuccess={handleOrderSuccess}
       />
+
+      {/* OTP Login Modal */}
+      {showLogin && (
+        <OtpLogin
+          onSuccess={handleLoginSuccess}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </div>
   );
 }

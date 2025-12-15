@@ -377,7 +377,6 @@ import { gsap } from 'gsap';
 import toast from 'react-hot-toast';
 import { getUserFromToken, getGuestId } from '../lib/getUser';
 import dynamic from 'next/dynamic';
-const PhoneOtpLogin = dynamic(() => import('./PhoneOtpLogin'), { ssr: false });
 
 const Product = ({ product, index, onBuyNow }) => {
   const router = useRouter();
@@ -385,8 +384,6 @@ const Product = ({ product, index, onBuyNow }) => {
   const [isMobileView, setIsMobileView] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showProductModal, setShowProductModal] = useState(false);
   const productRef = useRef(null);
 
   // Check if mobile view
@@ -420,12 +417,7 @@ const Product = ({ product, index, onBuyNow }) => {
     }
   }, [index]);
 
-  // Function to handle login success
-  const handleLoginSuccess = (user) => {
-    setShowLogin(false);
-    // Now we have user, proceed with buy now
-    onBuyNow(product, quantity);
-  };
+
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
@@ -470,12 +462,8 @@ const Product = ({ product, index, onBuyNow }) => {
 
   const handleBuyNow = (e) => {
     e.stopPropagation();
-    const user = getUserFromToken();
-    if (user) {
-      onBuyNow(product, quantity);
-      return;
-    }
-    setShowLogin(true);
+    // Just call onBuyNow - authentication is handled by parent component
+    onBuyNow(product, quantity);
   };
 
   const handlePhoneCall = (e) => {
@@ -547,15 +535,6 @@ const Product = ({ product, index, onBuyNow }) => {
 
   return (
     <>
-      {/* Render PhoneOtpLogin as a portal to body */}
-      {showLogin && typeof window !== 'undefined' && createPortal(
-        <PhoneOtpLogin
-          onSuccess={handleLoginSuccess}
-          onClose={() => setShowLogin(false)}
-        />,
-        document.body
-      )}
-
       {/* Product Card */}
       <div
         ref={productRef}

@@ -19,11 +19,11 @@ export async function PUT(request, { params }) {
 
     // If setting as default, unset other defaults
     if (updateData.isDefault) {
-      await Address.updateMany({ userId: user.id, _id: { $ne: id } }, { isDefault: false });
+      await Address.updateMany({ userId: user.userId, _id: { $ne: id } }, { isDefault: false });
     }
 
     const address = await Address.findOneAndUpdate(
-      { _id: id, userId: user.id },
+      { _id: id, userId: user.userId },
       updateData,
       { new: true }
     );
@@ -52,7 +52,7 @@ export async function DELETE(request, { params }) {
     await connectDB();
     const { id } = await params;
 
-    const address = await Address.findOneAndDelete({ _id: id, userId: user.id });
+    const address = await Address.findOneAndDelete({ _id: id, userId: user.userId });
 
     if (!address) {
       return Response.json({ error: 'Address not found' }, { status: 404 });

@@ -3,7 +3,6 @@ import Order from '../../../../models/order';
 import Coupon from '../../../../models/coupon';
 import User from '../../../../models/user';
 // Order creation no longer requires authentication; frontend may include `userId` or `null`.
-import { sendOrderNotificationToAdmins } from '../../../../lib/firebaseAdmin';
 
 export async function POST(request) {
   try {
@@ -48,17 +47,17 @@ export async function POST(request) {
 
     // Send notification to admin
     try {
-      // Get user name for notification
       const user = await User.findById(orderData.userId);
       const userName = user?.name || orderData.address?.name || 'Customer';
-      
-      await sendOrderNotificationToAdmins({
-        orderId: order._id,
-        userName,
-        items: orderData.items,
-        total: orderData.total,
-        paymentMethod: orderData.paymentMethod,
-        paymentStatus: orderData.paymentStatus || 'pending',
+      const productName = orderData.items.map(item => item.name).join(', ');
+      const amount = orderData.total;
+
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/notify/admin`, {
+        method: "POST",
+        body: JSON.stringify({
+          title: "New Order Received",
+          body: `${userName} ordered ${productName} for ₹${amount}`,
+        }),
       });
     } catch (notifyError) {
       console.error('Failed to send order notification:', notifyError);
