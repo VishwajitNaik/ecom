@@ -60,7 +60,8 @@ export async function POST(req) {
       }
     );
 
-    return Response.json({
+    // Create response and set cookie
+    const response = Response.json({
       success: true,
       token,
       user: {
@@ -69,6 +70,17 @@ export async function POST(req) {
         role: user.role
       }
     });
+
+    // Set cookie for middleware to access
+    response.cookies.set('token', token, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/'
+    });
+
+    return response;
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return Response.json({ error: error.message || "Failed to verify OTP" }, { status: 500 });

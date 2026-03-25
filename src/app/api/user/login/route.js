@@ -23,7 +23,19 @@ export async function POST(request) {
     // Generate JWT token
     const token = jwt.sign({ id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    return Response.json({ message: 'Login successful', token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role } });
+    // Create response with token
+    const response = Response.json({ message: 'Login successful', token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role } });
+
+    // Set cookie for middleware to access
+    response.cookies.set('token', token, {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/'
+    });
+
+    return response;
   } catch (error) {
     return Response.json({ error: 'Login failed' }, { status: 500 });
   }
