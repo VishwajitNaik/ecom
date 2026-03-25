@@ -1,5 +1,6 @@
 import twilio from "twilio";
 import jwt from "jsonwebtoken";
+import { NextResponse } from 'next/server';
 import connectDB from "../../../../dbconfig/dbconfig";
 import User from "../../../../models/user";
 
@@ -13,7 +14,7 @@ export async function POST(req) {
     const { phone, code } = await req.json();
 
     if (!phone || !code) {
-      return Response.json({ error: "Phone number and OTP code are required" }, { status: 400 });
+      return NextResponse.json({ error: "Phone number and OTP code are required" }, { status: 400 });
     }
 
     // Format phone number to E.164 format if needed
@@ -28,7 +29,7 @@ export async function POST(req) {
       });
 
     if (verification.status !== "approved") {
-      return Response.json({ error: "Invalid OTP" }, { status: 401 });
+      return NextResponse.json({ error: "Invalid OTP" }, { status: 401 });
     }
 
     // Connect to database
@@ -61,7 +62,7 @@ export async function POST(req) {
     );
 
     // Create response and set cookie
-    const response = Response.json({
+    const response = NextResponse.json({
       success: true,
       token,
       user: {
@@ -83,6 +84,6 @@ export async function POST(req) {
     return response;
   } catch (error) {
     console.error("Error verifying OTP:", error);
-    return Response.json({ error: error.message || "Failed to verify OTP" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to verify OTP" }, { status: 500 });
   }
 }
