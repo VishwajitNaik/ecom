@@ -9,7 +9,8 @@ export async function GET(request) {
     const productPacks = await ProductPack.find({}).populate('productId');
     return Response.json(productPacks);
   } catch (error) {
-    return Response.json({ error: 'Failed to fetch product packs' }, { status: 500 });
+    console.error('Error fetching product packs:', error);
+    return Response.json({ error: 'Failed to fetch product packs', details: error.message }, { status: 500 });
   }
 }
 

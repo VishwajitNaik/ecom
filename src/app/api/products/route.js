@@ -7,6 +7,7 @@ export async function GET() {
     const products = await Product.find({});
     return Response.json(products);
   } catch (error) {
-    return Response.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error('Error fetching products:', error);
+    return Response.json({ error: 'Failed to fetch products', details: error.message }, { status: 500 });
   }
 }

@@ -52,7 +52,7 @@ export async function POST(request) {
       const productName = orderData.items.map(item => item.name).join(', ');
       const amount = orderData.total;
 
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/notify/admin`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/notify/admin`, {
         method: "POST",
         body: JSON.stringify({
           title: "New Order Received",
