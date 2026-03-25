@@ -14,6 +14,8 @@ const ReviewPrompt = () => {
   }, []);
 
   const checkForUnreviewedProducts = async () => {
+    if (typeof window === 'undefined') return;
+    
     const token = localStorage.getItem('token');
     const user = getUserFromToken();
 

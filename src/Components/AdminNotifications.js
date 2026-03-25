@@ -125,9 +125,10 @@ export default function AdminNotifications() {
 
   // Listen for foreground messages
   useEffect(() => {
-    if (typeof window === 'undefined' || !messaging || Notification.permission !== 'granted') {
-      return;
-    }
+    if (typeof window === 'undefined') return;
+    if (!messaging) return;
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission !== 'granted') return;
 
     const unsubscribe = onForegroundMessage((payload) => {
       console.log('Foreground message:', payload);
