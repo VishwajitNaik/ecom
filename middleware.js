@@ -24,8 +24,8 @@ export function middleware(request) {
     '/Products/Cart',
     '/products',
     '/Privacy-Policy',
-    'Refund-Policy',
-    'Terms&Conditions'
+    '/Refund-Policy',
+    '/Terms&Conditions'
   ];
 
   if (publicRoutes.some(route => pathname === route || pathname.startsWith('/products/'))) {
