@@ -586,16 +586,7 @@ export default function ProductsPage() {
           </div>
         )}
 
-        {/* View All Button */}
-        {allItems.length > 0 && (
-          <div className="text-center mt-8 lg:mt-12">
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white
-              px-8 lg:px-12 py-3 lg:py-4 rounded-full font-semibold hover:from-blue-600 hover:to-purple-700
-              transition-all duration-300 transform hover:scale-105 shadow-lg text-base lg:text-lg">
-              View All Items ({allItems.length})
-            </button>
-          </div>
-        )}
+    
       </main>
 
       {/* Single Checkout Modal at Root Level - This will open full screen */}

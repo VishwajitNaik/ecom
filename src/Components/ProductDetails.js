@@ -1,40 +1,42 @@
 const ProductDetails = ({ product }) => {
+  const isProductPack = product?.itemType === 'productPack';
+  const productName = isProductPack ? product?.productName : product?.name;
+  const productDescription = isProductPack ? product?.description : product?.description;
+
   return (
     <div className="mt-12 space-y-8">
-      
+
       {/* About This Product */}
       <section className="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">About This Product</h2>
         <div className="prose prose-lg max-w-none">
           <p className="text-gray-600 mb-4">
-            <strong>Safed Musali</strong> is a powerful Ayurvedic herb known for its incredible health benefits. 
-            Our product is sourced directly from organic farms in the Himalayas and processed using traditional methods 
-            to preserve its natural potency.
+            <strong>{productName}</strong> {productDescription || 'is a premium quality product in our collection.'}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-green-600 text-sm">✓</span>
               </div>
-              <span className="text-gray-700">100% Natural & Organic</span>
+              <span className="text-gray-700">Premium Quality</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-green-600 text-sm">✓</span>
               </div>
-              <span className="text-gray-700">No Artificial Additives</span>
+              <span className="text-gray-700">Carefully Selected</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-green-600 text-sm">✓</span>
               </div>
-              <span className="text-gray-700">GMP Certified Facility</span>
+              <span className="text-gray-700">Quality Assured</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-green-600 text-sm">✓</span>
               </div>
-              <span className="text-gray-700">Lab Tested for Purity</span>
+              <span className="text-gray-700">Trusted Brand</span>
             </div>
           </div>
         </div>
@@ -47,27 +49,27 @@ const ProductDetails = ({ product }) => {
           <div className="flex gap-4">
             <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">1</div>
             <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Dosage Instructions</h3>
+              <h3 className="font-semibold text-gray-800 mb-2">Product Information</h3>
               <p className="text-gray-600">
-                Take 1-2 teaspoons (5-10g) of Safed Musali powder twice daily, preferably with milk or warm water.
+                {productDescription || 'Please refer to the product packaging for detailed usage instructions.'}
               </p>
             </div>
           </div>
           <div className="flex gap-4">
             <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">2</div>
             <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Best Time to Consume</h3>
+              <h3 className="font-semibold text-gray-800 mb-2">Storage</h3>
               <p className="text-gray-600">
-                Take in the morning on empty stomach and in the evening before dinner for best results.
+                Store in a cool, dry place away from direct sunlight.
               </p>
             </div>
           </div>
           <div className="flex gap-4">
             <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold">3</div>
             <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Duration</h3>
+              <h3 className="font-semibold text-gray-800 mb-2">Quality Assurance</h3>
               <p className="text-gray-600">
-                Continue for 2-3 months for optimal benefits. Consult your healthcare provider for long-term use.
+                Our products are carefully selected and quality tested to ensure the best experience.
               </p>
             </div>
           </div>
