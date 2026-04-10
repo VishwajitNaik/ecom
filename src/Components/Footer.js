@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
@@ -11,7 +13,7 @@ const Footer = () => {
                 <span className="text-white font-bold text-lg">🌿</span>
               </div>
               <h3 className="text-xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                AyurVeda Store
+                Aushadh Mart
               </h3>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed max-w-md mx-auto sm:mx-0">
@@ -54,13 +56,13 @@ const Footer = () => {
                   { icon: '📞', label: 'Contact', href: '/contact' }
                 ].map((link, index) => (
                   <li key={index}>
-                    <a
+                    <Link
                       href={link.href}
                       className="flex items-center justify-center sm:justify-start space-x-2 text-gray-300 hover:text-green-400 transition-all duration-300 transform hover:translate-x-1 group py-1"
                     >
                       <span className="text-base group-hover:scale-110 transition-transform">{link.icon}</span>
                       <span className="text-sm">{link.label}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -83,13 +85,13 @@ const Footer = () => {
                   {
                     icon: '📞',
                     title: 'Phone',
-                    content: '+91 98765 43210',
+                    content: '+91 8308383842',
                     bg: 'from-blue-500 to-cyan-500'
                   },
                   {
                     icon: '✉️',
                     title: 'Email',
-                    content: 'support@ayurvedastore.com',
+                    content: 'aushdhmart@gmail.com',
                     bg: 'from-green-500 to-emerald-500'
                   },
                   {
@@ -179,8 +181,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-
         {/* Bottom Bar */}
         <div className="border-t border-gray-700 pt-6">
           {/* Trust Badges - Mobile Optimized */}
@@ -201,17 +201,38 @@ const Footer = () => {
             ))}
           </div>
 
-          {/* Legal Links */}
+          {/* Legal Links - Using Next.js Link for client-side navigation */}
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-6 text-sm text-gray-400">
-            {['Privacy Policy', 'Terms of Service', 'Shipping Info', 'Returns', 'FAQ'].map((link, index) => (
-              <a
-                key={index}
-                href="#"
-                className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
-              >
-                {link}
-              </a>
-            ))}
+            <Link
+              href="/Privacy-Policy"
+              className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/Terms&Conditions"
+              className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
+            >
+              Terms & Conditions
+            </Link>
+            <Link
+              href="/Refund-Policy  "
+              className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
+            >
+              Refund Policy
+            </Link>
+            <Link
+              href="/shipping-info"
+              className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
+            >
+              Shipping Info
+            </Link>
+            <Link
+              href="/faq"
+              className="hover:text-green-400 transition-colors duration-200 py-1 text-xs sm:text-sm"
+            >
+              FAQ
+            </Link>
           </div>
 
           {/* Payment Methods */}
@@ -229,7 +250,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="text-center pt-4 border-t border-gray-700">
             <p className="text-gray-400 text-sm flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <span>© 2025 AyurVeda Store. All rights reserved.</span>
+              <span>© 2026 Aushadh Mart. All rights reserved.</span>
               <span className="flex items-center space-x-1">
                 <span>Made with</span>
                 <span className="text-red-500 animate-pulse">❤️</span>
@@ -241,24 +262,23 @@ const Footer = () => {
       </div>
 
       {/* Floating WhatsApp Button - Mobile Only */}
-<div className="fixed bottom-6 right-6 z-50 sm:hidden">
-  <a
-    href="https://wa.me/918308083842"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 animate-bounce"
-    aria-label="Chat on WhatsApp"
-  >
-    <svg
-      className="w-8 h-8 text-white"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-    >
-      {/* WhatsApp official logo path */}
-      <path d="M12.032 2c-5.509 0-9.974 4.486-9.974 10.019 0 2.037.6 3.991 1.741 5.657L2 22l4.204-1.101c1.665.913 3.581 1.444 5.609 1.444 5.509 0 9.974-4.486 9.974-10.019S17.541 2 12.032 2zm5.15 14.295c-.252.688-1.404 1.287-1.95 1.311-.426.018-.96.007-1.398-.222-.359-.185-.805-.435-1.398-.735-2.503-1.074-4.137-3.607-4.264-3.771-.127-.164-1.053-1.407-1.053-2.675 0-1.268.638-1.893.868-2.163.229-.27.495-.337.66-.337.164 0 .33 0 .475.008.143.006.33-.07.515.495.185.565.632 1.955.688 2.097.056.143.094.309.019.474-.075.164-.112.247-.224.38-.112.133-.235.297-.336.396-.112.112-.229.247-.098.478.132.23.594.997 1.274 1.613.873.787 1.614 1.048 1.855 1.157.24.11.384.094.525-.056.141-.15.604-.66.765-.887.161-.228.322-.19.537-.113.214.077 1.36.641 1.594.757.234.116.39.174.447.273.056.099.056.564-.197 1.252z"/>
-    </svg>
-  </a>
-</div>
+      <div className="fixed bottom-6 right-6 z-50 sm:hidden">
+        <a
+          href="https://wa.me/918308383842"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 transform hover:scale-110 animate-bounce"
+          aria-label="Chat on WhatsApp"
+        >
+          <svg
+            className="w-8 h-8 text-white"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M12.032 2c-5.509 0-9.974 4.486-9.974 10.019 0 2.037.6 3.991 1.741 5.657L2 22l4.204-1.101c1.665.913 3.581 1.444 5.609 1.444 5.509 0 9.974-4.486 9.974-10.019S17.541 2 12.032 2zm5.15 14.295c-.252.688-1.404 1.287-1.95 1.311-.426.018-.96.007-1.398-.222-.359-.185-.805-.435-1.398-.735-2.503-1.074-4.137-3.607-4.264-3.771-.127-.164-1.053-1.407-1.053-2.675 0-1.268.638-1.893.868-2.163.229-.27.495-.337.66-.337.164 0 .33 0 .475.008.143.006.33-.07.515.495.185.565.632 1.955.688 2.097.056.143.094.309.019.474-.075.164-.112.247-.224.38-.112.133-.235.297-.336.396-.112.112-.229.247-.098.478.132.23.594.997 1.274 1.613.873.787 1.614 1.048 1.855 1.157.24.11.384.094.525-.056.141-.15.604-.66.765-.887.161-.228.322-.19.537-.113.214.077 1.36.641 1.594.757.234.116.39.174.447.273.056.099.056.564-.197 1.252z"/>
+          </svg>
+        </a>
+      </div>
     </footer>
   );
 };
