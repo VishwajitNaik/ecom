@@ -22,7 +22,10 @@ export function middleware(request) {
     '/user/SignUp',
     '/Products',
     '/Products/Cart',
-    '/products'
+    '/products',
+    '/Privacy-Policy',
+    'Refund-Policy',
+    'Terms&Conditions'
   ];
 
   if (publicRoutes.some(route => pathname === route || pathname.startsWith('/products/'))) {
