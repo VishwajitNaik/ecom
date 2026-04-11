@@ -1,3 +1,5 @@
+// /lib/firebaseAdmin.js
+
 import admin from "firebase-admin";
 
 let app;

@@ -517,109 +517,12 @@ export default function Home() {
   <div className="container mx-auto px-4 relative z-10">
     {/* Main Content Grid */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      
-      {/* Text Content */}
-      <div className="text-center lg:text-left">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-blue-200/50 mb-6">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-          <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-            🎉 Premium E-commerce Experience
-          </span>
-        </div>
-
-        {/* Main Heading */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight">
-          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-transparent bg-clip-text">
-            Welcome to
-          </span>
-          <br />
-          <span className="bg-gradient-to-r from-gray-800 to-gray-600 text-transparent bg-clip-text">
-            Ecom Store
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-          Discover <span className="font-semibold text-blue-600">amazing products</span> at great prices. 
-          Experience <span className="font-semibold text-purple-600">seamless shopping</span> with premium quality 
-          and <span className="font-semibold text-pink-600">exceptional service</span>.
-        </p>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-2 gap-4 mb-8 max-w-md mx-auto lg:mx-0">
-          <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-gray-200/50">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <span className="text-green-600 text-sm">🚚</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">Free Shipping</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-gray-200/50">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 text-sm">🛡️</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">Secure Payment</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-gray-200/50">
-            <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
-              <span className="text-purple-600 text-sm">⭐</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">5-Star Quality</span>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg backdrop-blur-sm border border-gray-200/50">
-            <div className="w-8 h-8 bg-pink-500/20 rounded-full flex items-center justify-center">
-              <span className="text-pink-600 text-sm">💬</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">24/7 Support</span>
-          </div>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-          <Link 
-            href="/Products"
-            className="group relative bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-2xl px-8 py-4 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 hover:from-blue-700 hover:to-purple-700 inline-flex items-center justify-center gap-3"
-          >
-            <span>Start Shopping Now</span>
-            <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            {/* Shine Effect */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-          </Link>
-
-          <button className="group bg-white/80 backdrop-blur-sm text-gray-700 font-semibold rounded-2xl px-6 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-gray-200/50 hover:border-blue-300/50 inline-flex items-center justify-center gap-2">
-            <span>Learn More</span>
-            <span className="group-hover:translate-y-0.5 transition-transform duration-300">↓</span>
-          </button>
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-6 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-6 h-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full border-2 border-white"></div>
-              ))}
-            </div>
-            <span>Join 10k+ Happy Customers</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span key={star} className="text-yellow-400 text-sm">⭐</span>
-              ))}
-            </div>
-            <span>4.9/5 Rating</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Image Gallery */}
-      <div className="relative">
+            <div className="relative">
         {/* Main Product Image */}
         <div className="relative group">
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
           <img 
-            src="/assets/ayurveda2.webp" 
+            src="/assets/Shuga_amrit2.jpeg" 
             alt="Premium Products Collection"
             className="relative w-full h-auto rounded-2xl shadow-2xl transform group-hover:scale-105 transition-transform duration-500"
           />
@@ -632,7 +535,7 @@ export default function Home() {
         {/* Floating Product Cards */}
         <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-2xl border border-gray-200/50 transform rotate-3 hover:rotate-0 transition-transform duration-300">
           <img 
-            src="assets/ayurveda7.png" 
+            src="assets/Shuga_amrit1.jpeg" 
             alt="Smart Watch"
             className="w-20 h-20 rounded-xl object-cover"
           />
@@ -642,9 +545,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-2xl border border-gray-200/50 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+        <div className="absolute -top-6 -right-10 bg-white rounded-2xl p-4 shadow-2xl border border-gray-200/50 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
           <img 
-            src="/assets/ayurveda8.png" 
+            src="/assets/shuga_amrit3.jpeg" 
             alt="Wireless Headphones"
             className="w-20 h-20 rounded-xl object-cover"
           />
@@ -664,25 +567,6 @@ export default function Home() {
       </div>
     </div>
 
-    {/* Stats Section */}
-    <div className="mt-16 lg:mt-24 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto">
-      {[
-        { number: "10K+", label: "Happy Customers", icon: "😊" },
-        { number: "500+", label: "Premium Products", icon: "🛍️" },
-        { number: "24/7", label: "Customer Support", icon: "💬" },
-        { number: "99%", label: "Satisfaction Rate", icon: "⭐" }
-      ].map((stat, index) => (
-        <div key={index} className="text-center group">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-            <span className="text-2xl text-white">{stat.icon}</span>
-          </div>
-          <div className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
-            {stat.number}
-          </div>
-          <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
-        </div>
-      ))}
-    </div>
   </div>
 </section>
 
@@ -698,9 +582,9 @@ export default function Home() {
         </div> */}
 
         {/* Contact Section */}
-        <div>
+        {/* <div>
           <Contact />
-        </div>
+        </div> */}
       </main>
 
       {/* Floating Action Button - Smaller for mobile */}

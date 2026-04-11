@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import Footer from '../Components/Footer';
 import ReviewPrompt from '../Components/ReviewPrompt';
 import AdminNotifications from '../Components/AdminNotifications';
+import VisitorModal from '../Components/VisitorModal';
 
 const comicNeue = Comic_Neue({
   subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
       >
         {children}
         <Toaster />
+        <VisitorModal />
         <ReviewPrompt />
         <AdminNotifications />
         <Footer />

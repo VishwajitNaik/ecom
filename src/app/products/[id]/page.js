@@ -143,7 +143,7 @@ export default function ProductDetailPage() {
   };
 
   const handlePhoneCall = () => {
-    window.open('tel:+91 7447340940');
+    window.open('tel:+91 8308383842');
   };
 
   const handleLoginSuccess = () => {

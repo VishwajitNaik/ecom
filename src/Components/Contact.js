@@ -16,20 +16,29 @@ const Contact = () => {
 
   // Ayurveda-themed contact images
   const contactImages = [
-    "assets/vecteezy_luxurious-spa-items_2030288.jpg", // Ayurvedic consultation
-    "assets/pexels-n-voitkevich-7615457.jpg", // Natural herbs
-    "assets/ayurvedaHero2.webp", // Ayurvedic products
-    "assets/ayurveda9.avif"  // Wellness
+    "assets/ayurveda.jpg", // Ayurvedic consultation
+    "assets/ayurveda1.jpg", // Natural herbs
+    "assets/ayrvedaHero3.jpeg", // Ayurvedic products
+    "assets/shuga_amrit3.jpeg",  // Wellness
+    "assets/shuga_amrit4.jpeg",
+    "assets/AyurvedaHero4.jpg",
   ];
+
+  // Reset image index when images change
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [contactImages]);
 
   // Auto-change images
   useEffect(() => {
+    if (!contactImages || contactImages.length === 0) return;
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % contactImages.length);
     }, 3500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [contactImages]);
 
   // Animation on component mount
   useEffect(() => {
@@ -226,16 +235,16 @@ const Contact = () => {
             <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-emerald-200/50">
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-emerald-600 to-amber-600 rounded-3xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-                <img 
-                  src={contactImages[currentImageIndex]}
+                <img
+                  src={contactImages?.[currentImageIndex] || "/assets/ayurveda.jpg"}
                   alt="Ayurvedic Wellness Consultation"
                   className="relative w-full h-64 object-cover rounded-2xl shadow-xl transform group-hover:scale-105 transition-transform duration-500"
                 />
-                
+
                 {/* Image Indicator */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                  {contactImages.map((_, index) => (
-                    <div 
+                  {contactImages?.map((_, index) => (
+                    <div
                       key={index}
                       className={`w-2 h-2 rounded-full transition-all duration-300 ${
                         index === currentImageIndex ? 'bg-white scale-125' : 'bg-white/50'

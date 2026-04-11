@@ -1,183 +1,3 @@
-// "use client";
-// import { useState } from "react";
-// import { useRouter } from "next/navigation";
-// import toast from "react-hot-toast";
-
-// export default function OtpLogin({ onSuccess, onClose }) {
-//   const router = useRouter();
-//   const [phone, setPhone] = useState("");
-//   const [code, setCode] = useState("");
-//   const [step, setStep] = useState(1);
-//   const [loading, setLoading] = useState(false);
-
-//   const sendOtp = async () => {
-//     if (!phone) {
-//       toast.error("Please enter phone number");
-//       return;
-//     }
-
-//     setLoading(true);
-//     try {
-//       const response = await fetch("/api/auth/send-otp", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ phone }),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         toast.success("OTP sent successfully!");
-//         setStep(2);
-//       } else {
-//         toast.error(data.error || "Failed to send OTP");
-//       }
-//     } catch (error) {
-//       toast.error("Failed to send OTP");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const verifyOtp = async () => {
-//     if (!code) {
-//       toast.error("Please enter OTP");
-//       return;
-//     }
-
-//     setLoading(true);
-//     try {
-//       const response = await fetch("/api/auth/verify-otp", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ phone, code }),
-//       });
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         // Store token
-//         localStorage.setItem("token", data.token);
-
-//         toast.success("Login successful!");
-
-//         // Call onSuccess callback if provided
-//         if (onSuccess) {
-//           onSuccess(data.user);
-//         } else {
-//           // Default behavior: redirect to home
-//           router.push("/");
-//         }
-//       } else {
-//         toast.error(data.error || "Invalid OTP");
-//       }
-//     } catch (error) {
-//       toast.error("Failed to verify OTP");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const resetForm = () => {
-//     setStep(1);
-//     setPhone("");
-//     setCode("");
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-white/80 bg-blure-sm bg-opacity-50 text-gray-800 flex items-center justify-center z-50">
-//       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-//         <div className="flex justify-between items-center mb-6">
-//           <h2 className="text-2xl font-bold text-gray-800">
-//             {step === 1 ? "Login with Phone" : "Enter OTP"}
-//           </h2>
-//           {onClose && (
-//             <button
-//               onClick={onClose}
-//               className="text-gray-500 hover:text-gray-700"
-//             >
-//               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-//               </svg>
-//             </button>
-//           )}
-//         </div>
-
-//         {step === 1 ? (
-//           <div className="space-y-4">
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700 mb-2">
-//                 Phone Number
-//               </label>
-//               <input
-//                 type="tel"
-//                 placeholder="+919999999999 or 9999999999"
-//                 value={phone}
-//                 onChange={(e) => setPhone(e.target.value)}
-//                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-//                 disabled={loading}
-//               />
-//             </div>
-
-//             <button
-//               onClick={sendOtp}
-//               disabled={loading}
-//               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-//             >
-//               {loading ? "Sending..." : "Send OTP"}
-//             </button>
-//           </div>
-//         ) : (
-//           <div className="space-y-4">
-//             <div>
-//               <p className="text-sm text-gray-600 mb-2">
-//                 OTP sent to {phone.startsWith('+') ? phone : `+91${phone}`}
-//               </p>
-//               <label className="block text-sm font-medium text-gray-700 mb-2">
-//                 Enter OTP
-//               </label>
-//               <input
-//                 type="text"
-//                 placeholder="Enter 6-digit OTP"
-//                 value={code}
-//                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-//                 maxLength={6}
-//                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl font-mono tracking-widest"
-//                 disabled={loading}
-//               />
-//             </div>
-
-//             <div className="flex space-x-3">
-//               <button
-//                 onClick={resetForm}
-//                 className="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-//                 disabled={loading}
-//               >
-//                 Back
-//               </button>
-//               <button
-//                 onClick={verifyOtp}
-//                 disabled={loading || code.length !== 6}
-//                 className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-//               >
-//                 {loading ? "Verifying..." : "Verify OTP"}
-//               </button>
-//             </div>
-//           </div>
-//         )}
-
-//         <div className="mt-6 text-center text-sm text-gray-500">
-//           By continuing, you agree to our Terms of Service and Privacy Policy
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -682,3 +502,208 @@ export default function OtpLogin({ onSuccess, onClose }) {
     </div>
   );
 }
+
+
+// "use client";
+
+// import { useState, useRef, useEffect } from "react";
+// import { useRouter } from "next/navigation";
+// import toast from "react-hot-toast";
+// import { auth } from "../lib/firebase";
+// import { sendOtpFirebase, verifyOtpFirebase } from "../lib/phoneAuth";
+// import { generateAndSaveFCMToken } from "../lib/generateFCMToken";
+
+// export default function OtpLogin({ onSuccess, onClose }) {
+//   const router = useRouter();
+
+//   const [phone, setPhone] = useState("");
+//   const [code, setCode] = useState(["", "", "", "", "", ""]);
+//   const [step, setStep] = useState(1);
+//   const [loading, setLoading] = useState(false);
+//   const [resendTimer, setResendTimer] = useState(0);
+
+//   const otpInputsRef = useRef([]);
+
+//   /* ================== RECAPTCHA ================== */
+//   // setupRecaptcha is now handled in phoneAuth.js
+
+//   /* ================== TIMER ================== */
+//   useEffect(() => {
+//     let timer;
+//     if (resendTimer > 0) {
+//       timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+//     }
+//     return () => clearTimeout(timer);
+//   }, [resendTimer]);
+
+//   /* ================== SEND OTP ================== */
+//   const sendOtp = async () => {
+//     if (loading) return;
+
+//     if (!phone || phone.length < 10) {
+//       toast.error("Valid mobile number required");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       await sendOtpFirebase(phone);
+
+//       toast.success("OTP sent successfully!");
+//       setStep(2);
+//       setResendTimer(30);
+//     } catch (err) {
+//       console.error(err);
+//       toast.error("Failed to send OTP");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   /* ================== VERIFY OTP ================== */
+//   const verifyOtp = async () => {
+//     if (loading) return;
+
+//     const otp = code.join("");
+
+//     if (otp.length !== 6) {
+//       toast.error("Enter valid 6 digit OTP");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const user = await verifyOtpFirebase(otp);
+
+//       // 🔥 Get Firebase token
+//       const idToken = await user.getIdToken();
+
+//       // 🔥 Send to backend
+//       const res = await fetch("/api/auth/firebase-login", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ token: idToken }),
+//       });
+
+//       const data = await res.json();
+
+//       if (res.ok) {
+//         localStorage.setItem("token", data.token);
+
+//         // FCM for admin
+//         if (data.user?.role === "admin") {
+//           generateAndSaveFCMToken();
+//         }
+
+//         toast.success("Login Successful");
+
+//         if (onSuccess) onSuccess(data.user);
+//         else router.push("/");
+//       } else {
+//         toast.error(data.error || "Login failed");
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       toast.error("Invalid OTP");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   /* ================== OTP INPUT ================== */
+//   const handleOtpChange = (index, value) => {
+//     const newCode = [...code];
+//     newCode[index] = value.replace(/\D/g, "").slice(0, 1);
+//     setCode(newCode);
+
+//     if (value && index < 5) {
+//       otpInputsRef.current[index + 1]?.focus();
+//     }
+
+//     // Auto submit
+//     if (newCode.join("").length === 6) {
+//       verifyOtp();
+//     }
+//   };
+
+//   /* ================== UI ================== */
+//   return (
+//     <div className="fixed inset-0 flex items-center justify-center bg-black/60">
+//       <div className="bg-white p-6 rounded-xl w-full max-w-md">
+
+//         {/* STEP 1 */}
+//         {step === 1 && (
+//           <>
+//             <h2 className="text-xl font-bold mb-4">Login with Phone</h2>
+
+//             <div className="flex items-center border p-3 rounded">
+//               <span className="mr-2">+91</span>
+//               <input
+//                 type="tel"
+//                 value={phone}
+//                 onChange={(e) =>
+//                   setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))
+//                 }
+//                 className="outline-none w-full"
+//                 placeholder="Enter mobile number"
+//               />
+//             </div>
+
+//             <button
+//               onClick={sendOtp}
+//               disabled={loading}
+//               className="w-full bg-blue-600 text-white py-3 rounded mt-4"
+//             >
+//               {loading ? "Sending..." : "Send OTP"}
+//             </button>
+//           </>
+//         )}
+
+//         {/* STEP 2 */}
+//         {step === 2 && (
+//           <>
+//             <h2 className="text-xl font-bold mb-4">Enter OTP</h2>
+
+//             <div className="flex gap-2 justify-center mb-4">
+//               {code.map((d, i) => (
+//                 <input
+//                   key={i}
+//                   ref={(el) => (otpInputsRef.current[i] = el)}
+//                   value={d}
+//                   onChange={(e) => handleOtpChange(i, e.target.value)}
+//                   maxLength={1}
+//                   className="w-10 h-12 text-center border rounded"
+//                 />
+//               ))}
+//             </div>
+
+//             <button
+//               onClick={verifyOtp}
+//               disabled={loading}
+//               className="w-full bg-green-600 text-white py-3 rounded"
+//             >
+//               {loading ? "Verifying..." : "Verify OTP"}
+//             </button>
+
+//             <button
+//               onClick={sendOtp}
+//               disabled={resendTimer > 0}
+//               className="text-sm mt-3 text-blue-500"
+//             >
+//               {resendTimer > 0
+//                 ? `Resend in ${resendTimer}s`
+//                 : "Resend OTP"}
+//             </button>
+//           </>
+//         )}
+
+//         {/* reCAPTCHA */}
+//         <div id="recaptcha-container"></div>
+//       </div>
+//     </div>
+//   );
+// }

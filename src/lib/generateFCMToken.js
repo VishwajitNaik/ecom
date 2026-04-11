@@ -1,3 +1,5 @@
+// lib/generateFCMToken.js
+
 import { getMessaging, getToken } from "firebase/messaging";
 import { app } from "./firebase";
 
