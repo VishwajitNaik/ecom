@@ -50,45 +50,12 @@ const Product = ({ product, index, onBuyNow }) => {
 
 
 
-  const handleAddToCart = async (e) => {
+  const handleWhatsApp = (e) => {
     e.stopPropagation();
-    const user = getUserFromToken();
-    const guestId = getGuestId();
-    const token = localStorage.getItem('token');
-    try {
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-      const res = await fetch('/api/cart', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          userId: user?.id || null,
-          guestId: user?.id ? null : guestId,
-          productId: product._id,
-          quantity: parseInt(quantity),
-          itemType: isProductPack ? 'productPack' : 'product',
-        }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success(data.message);
-        gsap.fromTo(productRef.current,
-          { scale: 1 },
-          {
-            scale: 1.05,
-            duration: 0.2,
-            yoyo: true,
-            repeat: 1,
-            ease: "power2.inOut"
-          }
-        );
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      console.error('Cart fetch error:', error);
-      toast.error('Failed to add to cart');
-    }
+    const message = `Hi, I'm interested in ${isProductPack ? product.productName : product.name}. Can you provide more details?`;
+    const phoneNumber = '918308383842'; // Same as in Footer
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const handleBuyNow = (e) => {
@@ -297,31 +264,32 @@ const Product = ({ product, index, onBuyNow }) => {
 
           {/* Action Buttons */}
           <div className="flex gap-2">
-            {/* Add to Cart Button */}
+            {/* WhatsApp Button */}
             <button
-              onClick={handleAddToCart}
-              disabled={isProductPack ? false : (!product.stock || product.stock === 0)}
-              className="flex-1 bg-blue-600 text-white py-2 px-2 rounded-lg
-                hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed
+              onClick={handleWhatsApp}
+              className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-2 px-2 rounded-lg
                 transition-colors duration-300 font-medium text-sm flex items-center justify-center gap-1"
-              title="Add to Cart"
+              title="Chat on WhatsApp"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12.032 2c-5.509 0-9.974 4.486-9.974 10.019 0 2.037.6 3.991 1.741 5.657L2 22l4.204-1.101c1.665.913 3.581 1.444 5.609 1.444 5.509 0 9.974-4.486 9.974-10.019S17.541 2 12.032 2zm5.15 14.295c-.252.688-1.404 1.287-1.95 1.311-.426.018-.96.007-1.398-.222-.359-.185-.805-.435-1.398-.735-2.503-1.074-4.137-3.607-4.264-3.771-.127-.164-1.053-1.407-1.053-2.675 0-1.268.638-1.893.868-2.163.229-.27.495-.337.66-.337.164 0 .33 0 .475.008.143.006.33-.07.515.495.185.565.632 1.955.688 2.097.056.143.094.309.019.474-.075.164-.112.247-.224.38-.112.133-.235.297-.336.396-.112.112-.229.247-.098.478.132.23.594.997 1.274 1.613.873.787 1.614 1.048 1.855 1.157.24.11.384.094.525-.056.141-.15.604-.66.765-.887.161-.228.322-.19.537-.113.214.077 1.36.641 1.594.757.234.116.39.174.447.273.056.099.056.564-.197 1.252z"/>
               </svg>
             </button>
-                  {/* Phone Call Button */}
-          <button
-            onClick={handlePhoneCall}
-            className="flex-1 bg-gray-400 text-white py-2 px-2 rounded-lg
-              hover:bg-purple-700 transition-colors duration-300 font-medium text-sm flex items-center justify-center gap-1"
-            title="Call for Details"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-          </button>
-
+            {/* Phone Call Button */}
+            <button
+              onClick={handlePhoneCall}
+              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-2 rounded-lg
+                transition-colors duration-300 font-medium text-sm flex items-center justify-center gap-1"
+              title="Call for Details"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </button>
             {/* Buy Now Button - This will trigger login if needed */}
             <button
               onClick={handleBuyNow}
@@ -336,7 +304,6 @@ const Product = ({ product, index, onBuyNow }) => {
               </svg>
               <span className="hidden lg:inline">Buy</span>
             </button>
-            
           </div>
         </div>
       </div>
