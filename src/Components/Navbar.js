@@ -10619,9 +10619,9 @@ const Navbar = () => {
   <div className="bg-transparent p-0 m-0">
     <Link href="/" className="flex items-center">
       <img
-        src="/assets/main/logo3.png"
+        src="/assets/main/shuga_amrit_no_bg_fullhd.png"
         alt="Company Logo"
-        className="w-64 md:w-72 lg:w-80 xl:w-96 mt-5 -ml-10 h-auto object-contain hover:scale-110 transition-transform duration-300"
+        className="w-80 md:w-96 lg:w-[28rem] xl:w-[36rem] mt-5 -ml-20 h-auto object-contain hover:scale-110 transition-transform duration-300"
         style={{
           filter: 'none',
           backgroundColor: 'transparent',
