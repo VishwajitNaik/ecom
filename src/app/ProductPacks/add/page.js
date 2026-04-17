@@ -23,6 +23,8 @@ const AddProductPackPage = () => {
     discount: 0,
     productId: '',
   });
+  const [images, setImages] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const containerRef = useRef(null);
   const formRef = useRef(null);
@@ -101,6 +103,82 @@ const AddProductPackPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    const token = localStorage.getItem('token');
+    const uploadedUrls = [];
+
+    try {
+      for (const file of files) {
+        const formDataUpload = new FormData();
+        formDataUpload.append('image', file);
+
+        const res = await fetch('/api/productPacks/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formDataUpload,
+        });
+
+        const data = await res.json();
+        if (data.url) {
+          uploadedUrls.push(data.url);
+        } else {
+          toast.error(`Failed to upload ${file.name}`);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setImages((prev) => [...prev, ...uploadedUrls]);
+        toast.success(`Uploaded ${uploadedUrls.length} image(s)`);
+
+        // Image preview animation
+        gsap.fromTo('.image-preview-item',
+          {
+            opacity: 0,
+            scale: 0.8,
+            rotation: -10
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "back.out(1.7)"
+          }
+        );
+      }
+    } catch (error) {
+      toast.error('Upload error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (index) => {
+    // Remove animation
+    const imageElement = document.querySelector(`[data-image-index="${index}"]`);
+    if (imageElement) {
+      gsap.to(imageElement, {
+        opacity: 0,
+        scale: 0,
+        rotation: 45,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          setImages(images.filter((_, i) => i !== index));
+        }
+      });
+    } else {
+      setImages(images.filter((_, i) => i !== index));
+    }
+  };
+
   const addExternalLink = () => {
     setExternalLinks([...externalLinks, { platform: 'amazon', url: '', price: '' }]);
   };
@@ -118,6 +196,11 @@ const AddProductPackPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (images.length === 0) {
+      toast.error('Please upload at least one image');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -130,6 +213,7 @@ const AddProductPackPage = () => {
         },
         body: JSON.stringify({
           ...formData,
+          images,
           externalLinks: externalLinks.filter(link => link.url.trim() !== ''), // Only include links with URLs
           dayOfDose: parseInt(formData.dayOfDose),
           priceInRupee: parseFloat(formData.priceInRupee),
@@ -153,6 +237,20 @@ const AddProductPackPage = () => {
         
         toast.success('Product pack created successfully!');
         setTimeout(() => {
+          setFormData({
+            productName: '',
+            typeOfPack: '',
+            dayOfDose: '',
+            weightInLiter: '',
+            priceInRupee: '',
+            shippingPrice: '',
+            usePerDay: '',
+            quantity: 1,
+            discount: 0,
+            productId: '',
+          });
+          setImages([]);
+          setExternalLinks([]);
           router.push('/ProductPacks');
         }, 1500);
       } else {
@@ -259,6 +357,70 @@ const AddProductPackPage = () => {
                     placeholder="e.g., Vitamin D3 1000IU - 30 Day Wellness Pack"
                     className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 placeholder-gray-400 backdrop-blur-sm"
                   />
+                </div>
+
+                {/* Image Upload */}
+                <div className="form-element lg:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Product Pack Images *
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-orange-400 transition-all duration-300 hover:bg-orange-50">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="flex flex-col items-center">
+                        <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mb-3">
+                          <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-600 font-medium">
+                          {uploading ? 'Uploading...' : 'Click to upload images'}
+                        </p>
+                        <p className="text-gray-400 text-sm mt-1">
+                          PNG, JPG, WEBP up to 10MB
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Image Previews */}
+                  {images.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-600 mb-3 font-medium">
+                        {images.length} image(s) uploaded
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {images.map((img, index) => (
+                          <div
+                            key={index}
+                            data-image-index={index}
+                            className="image-preview-item relative group"
+                          >
+                            <img
+                              src={img}
+                              alt={`Uploaded ${index + 1}`}
+                              className="w-20 h-20 object-cover border-2 border-gray-200 rounded-xl shadow-sm group-hover:shadow-md transition-all duration-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-600 shadow-lg"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Type of Pack */}
@@ -520,7 +682,7 @@ const AddProductPackPage = () => {
                 <div className="form-element lg:col-span-2 pt-4">
                   <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || uploading}
                     className="w-full bg-gradient-to-r from-orange-600 to-amber-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-orange-700 hover:to-amber-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                   >
                     {isLoading ? (

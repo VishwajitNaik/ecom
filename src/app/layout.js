@@ -1,4 +1,4 @@
-import { Comic_Neue } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import Footer from '../Components/Footer';
@@ -6,7 +6,7 @@ import ReviewPrompt from '../Components/ReviewPrompt';
 import AdminNotifications from '../Components/AdminNotifications';
 import VisitorModal from '../Components/VisitorModal';
 
-const comicNeue = Comic_Neue({
+const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "700"],
 });
@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${comicNeue.className} antialiased`}
+        className={`${inter.className} antialiased`}
       >
         {children}
         <Toaster />

@@ -219,11 +219,11 @@ const ProductPacksPage = () => {
                 <div className="p-6">
                   {/* Product Image and Info */}
                   <div className="flex items-start gap-4 mb-6">
-                    {pack.productId?.images?.[0] && (
+                    {(pack.images?.[0] || pack.productId?.images?.[0]) && (
                       <div className="relative">
                         <img
-                          src={pack.productId.images[0]}
-                          alt={pack.productId.name}
+                          src={pack.images?.[0] || pack.productId.images[0]}
+                          alt={pack.productName}
                           className="w-16 h-16 lg:w-20 lg:h-20 object-cover rounded-xl border-2 border-gray-200 shadow-sm"
                           onError={(e) => {
                             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMCAyMEg0NFY0NEgyMFYyMFoiIGZpbGw9IiM5Q0E0QUYiLz4KPHBhdGggZD0iTTIyIDIySDQyVjQySDIyVjIyWiIgZmlsbD0iI0Y5RkFGRiIvPgo8L3N2Zz4K';

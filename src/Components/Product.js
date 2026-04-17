@@ -115,7 +115,7 @@ const Product = ({ product, index, onBuyNow }) => {
   };
 
   const stockStatus = getStockStatus(product.stock || 0);
-  const daysRemaining = calculateDaysRemaining(product.expireDate);
+  const daysRemaining = calculateDaysRemaining(isProductPack ? product.productId?.expireDate : product.expireDate);
   const expiryStatus = getExpiryStatus(daysRemaining);
 
   const handleCardClick = () => {
@@ -142,7 +142,7 @@ const Product = ({ product, index, onBuyNow }) => {
           <Image
             src={
               isProductPack
-                ? (product.productId?.images?.[0] || 'https://via.placeholder.com/300x150?text=Pack')
+                ? (product.images?.[0] || 'https://via.placeholder.com/300x150?text=Pack')
                 : (product.images?.[0] || 'https://via.placeholder.com/300x150?text=Product')
             }
             alt={isProductPack ? product.productName : product.name}
@@ -182,34 +182,32 @@ const Product = ({ product, index, onBuyNow }) => {
             )}
           </div>
 
-          {/* Date Information - For individual products */}
-          {!isProductPack && (
-            <div className="space-y-1 mb-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Mfg:</span>
-                <span className="text-gray-700 font-medium">
-                  {formatDate(product.manufacturedDate)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Exp:</span>
-                <span className="text-gray-700 font-medium">
-                  {formatDate(product.expireDate)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Days:</span>
-                <span className={`font-bold ${expiryStatus}`}>
-                  {daysRemaining}d
-                </span>
-              </div>
+          {/* Date Information */}
+          <div className="space-y-1 mb-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Mfg:</span>
+              <span className="text-gray-700 font-medium">
+                {formatDate(isProductPack ? product.productId?.manufacturedDate : product.manufacturedDate)}
+              </span>
             </div>
-          )}
+            <div className="flex justify-between">
+              <span className="text-gray-500">Exp:</span>
+              <span className="text-gray-700 font-medium">
+                {formatDate(isProductPack ? product.productId?.expireDate : product.expireDate)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Days:</span>
+              <span className={`font-bold ${expiryStatus}`}>
+                {daysRemaining}d
+              </span>
+            </div>
+          </div>
 
           {/* Stock Status */}
           <div className="flex items-center justify-between mb-3">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-              isProductPack 
+              isProductPack
                 ? 'bg-blue-100 text-blue-800'
                 : stockStatus.color
             }`}>
@@ -219,6 +217,16 @@ const Product = ({ product, index, onBuyNow }) => {
               {isProductPack ? `${product.quantity} units` : `${product.stock || 0}u`}
             </span>
           </div>
+
+          {/* Size Information */}
+          {product.weightInLiter && (
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-gray-500">Size:</span>
+              <span className="text-xs font-medium text-gray-700">
+                {product.weightInLiter} ml
+              </span>
+            </div>
+          )}
 
           {/* Quantity Selector - Only for individual products */}
           {!isProductPack && (
@@ -302,7 +310,7 @@ const Product = ({ product, index, onBuyNow }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span className="hidden lg:inline">Buy</span>
+              <span>Buy</span>
             </button>
           </div>
         </div>

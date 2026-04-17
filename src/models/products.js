@@ -25,6 +25,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  weightInLiter: {
+    type: String,
+    required: true,
+  },
   manufacturedDate: {
     type: Date,
     required: true,

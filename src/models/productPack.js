@@ -20,6 +20,10 @@ const productPackSchema = new mongoose.Schema({
     required: true,
     enum: ['1', '500ml', '250ml', '100ml'],
   },
+  images: {
+    type: [String],
+    required: true,
+  },
   priceInRupee: {
     type: Number,
     required: true,

@@ -19,11 +19,11 @@ const AboutUs = () => {
 
   // Ayurveda-themed images
   const ayurvedaImages = [
-    "/assets/main/ayurveda1-removebg-preview.png",
-    "/assets/main/ayurveda2-removebg-preview.png",
-    "/assets/main/ayurveda3-removebg-preview.png",
-    "/assets/main/ayurveda4-removebg-preview.png",
-    "/assets/main/ayurveda5-removebg-preview.png"
+    "/assets/desktop.png",
+    "/assets/desktop1.png",
+    "/assets/desktop2.png",
+    "/assets/desktop3.png",
+    "/assets/shuga_amrit4.jpeg"
   ];
 
   // Auto-change images
@@ -201,21 +201,6 @@ const AboutUs = () => {
                 helping you achieve natural wellness and balanced living in today's fast-paced world.
               </p>
             </div>
-
-            {/* Ayurveda Principles */}
-            <div ref={principlesRef} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                { icon: "⚖️", title: "Balance", desc: "Dosha Harmony" },
-                { icon: "🌱", title: "Purity", desc: "Natural Ingredients" },
-                { icon: "🕉️", title: "Harmony", desc: "Mind & Body" }
-              ].map((principle, index) => (
-                <div key={index} className="bg-gradient-to-br from-emerald-500 to-amber-500 text-white rounded-2xl p-4 text-center shadow-lg transform hover:scale-105 transition-all duration-300 hover-card">
-                  <div className="text-2xl mb-2 floating-element">{principle.icon}</div>
-                  <h4 className="font-bold text-sm mb-1">{principle.title}</h4>
-                  <p className="text-xs opacity-90">{principle.desc}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Auto-changing Image Gallery */}
@@ -242,30 +227,9 @@ const AboutUs = () => {
               </div>
             </div>
 
-            {/* Floating Product Cards */}
-            <div className="floating-card absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-2xl border border-emerald-200/50 transform rotate-3 hover:rotate-0 transition-transform duration-300 hover-card">
-              <img 
-                src="assets/main/ayurveda5-removebg-preview.png"
-                alt="Ayurvedic Herbs"
-                className="w-16 h-16 rounded-xl object-cover"
-              />
-              <div className="mt-2">
-                <p className="text-xs font-semibold text-gray-800">Medicinal Herbs</p>
-                <p className="text-xs text-emerald-600 font-bold">Pure & Natural</p>
-              </div>
-            </div>
+         
 
-            <div className="floating-card absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-2xl border border-amber-200/50 transform -rotate-3 hover:rotate-0 transition-transform duration-300 hover-card">
-              <img 
-                src="assets/main/ayurveda6-removebg-preview.png"
-                alt="Ayurvedic Oils"
-                className="w-16 h-16 rounded-xl object-cover"
-              />
-              <div className="mt-2">
-                <p className="text-xs font-semibold text-gray-800">Therapeutic Oils</p>
-                <p className="text-xs text-amber-600 font-bold">Authentic</p>
-              </div>
-            </div>
+      
           </div>
         </div>
 
@@ -306,7 +270,7 @@ const AboutUs = () => {
         {/* Why Choose Us Section */}
         <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-2xl border border-emerald-200/50">
           <h3 className="text-3xl font-bold mb-8 text-center text-emerald-600">Why Choose AyurVeda Store?</h3>
-          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div ref={featuresRef} className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: "🔬", title: "Lab Tested", desc: "Rigorous quality checks" },
               { icon: "🌍", title: "Direct Source", desc: "From farm to you" },

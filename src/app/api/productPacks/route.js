@@ -35,6 +35,7 @@ export async function POST(request) {
       shippingPrice,
       usePerDay,
       quantity,
+      images,
       discount,
       productId,
       externalLinks
@@ -52,6 +53,7 @@ export async function POST(request) {
       shippingPrice,
       usePerDay,
       quantity,
+      images,
       discount,
       totalPrice,
       productId,
@@ -63,6 +65,11 @@ export async function POST(request) {
 
     return Response.json({ message: 'Product pack added successfully', productPack: populatedPack });
   } catch (error) {
+    console.error('Error creating product pack:', error);
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => err.message);
+      return Response.json({ error: `Validation failed: ${errors.join(', ')}` }, { status: 400 });
+    }
     return Response.json({ error: 'Failed to add product pack' }, { status: 500 });
   }
 }

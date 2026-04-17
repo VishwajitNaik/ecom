@@ -37,7 +37,7 @@ export async function PUT(request, { params }) {
     }
 
     const body = await request.json();
-    const { name, description, price, images, category, stock, manufacturedDate, expireDate, externalLinks } = body;
+    const { name, description, price, images, category, stock, weightInLiter, manufacturedDate, expireDate, externalLinks } = body;
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -48,6 +48,7 @@ export async function PUT(request, { params }) {
         images,
         category,
         stock,
+        weightInLiter,
         manufacturedDate,
         expireDate,
         externalLinks,

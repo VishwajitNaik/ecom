@@ -11,6 +11,7 @@ const AddProductPage = () => {
     price: '',
     category: '',
     stock: '',
+    weightInLiter: '',
     manufacturedDate: '',
     expireDate: '',
   });
@@ -249,6 +250,7 @@ const AddProductPage = () => {
             price: '',
             category: '',
             stock: '',
+            weightInLiter: '',
             manufacturedDate: '',
             expireDate: '',
           });
@@ -391,6 +393,24 @@ const AddProductPage = () => {
                     />
                   </div>
                 </div>
+
+                {/* Weight/Size */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    Weight/Size *
+                  </label>
+                  <input
+                    ref={(el) => addToInputRefs(el, 4)}
+                    type="text"
+                    name="weightInLiter"
+                    value={formData.weightInLiter}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-4 border-2 border-gray-200 rounded-2xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none"
+                    placeholder="e.g., 500ml, 1L, 100g"
+                    style={{ opacity: 0 }}
+                  />
+                </div>
               </div>
 
               {/* Right Column */}
@@ -401,7 +421,7 @@ const AddProductPage = () => {
                     Category *
                   </label>
                   <input
-                    ref={(el) => addToInputRefs(el, 4)}
+                    ref={(el) => addToInputRefs(el, 5)}
                     type="text"
                     name="category"
                     value={formData.category}
@@ -420,7 +440,7 @@ const AddProductPage = () => {
                       Manufactured Date *
                     </label>
                     <input
-                      ref={(el) => addToInputRefs(el, 5)}
+                      ref={(el) => addToInputRefs(el, 6)}
                       type="date"
                       name="manufacturedDate"
                       value={formData.manufacturedDate}
@@ -436,7 +456,7 @@ const AddProductPage = () => {
                       Expiry Date *
                     </label>
                     <input
-                      ref={(el) => addToInputRefs(el, 6)}
+                      ref={(el) => addToInputRefs(el, 7)}
                       type="date"
                       name="expireDate"
                       value={formData.expireDate}
@@ -455,7 +475,7 @@ const AddProductPage = () => {
                   </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-blue-400 transition-all duration-300 hover:bg-blue-50">
                     <input
-                      ref={(el) => addToInputRefs(el, 7)}
+                      ref={(el) => addToInputRefs(el, 8)}
                       type="file"
                       accept="image/*"
                       multiple

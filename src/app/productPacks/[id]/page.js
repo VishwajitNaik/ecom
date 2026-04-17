@@ -11,13 +11,12 @@ import dynamic from 'next/dynamic';
 
 const OtpLogin = dynamic(() => import('../../../Components/OtpLogin'), { ssr: false });
 
-export default function ProductDetailPage() {
+export default function ProductPackDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { id } = params;
 
-  const [product, setProduct] = useState(null);
-  const [productDetails, setProductDetails] = useState(null);
+  const [productPack, setProductPack] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -28,31 +27,20 @@ export default function ProductDetailPage() {
   const containerRef = useRef(null);
   const hasAnimatedRef = useRef(false);
 
-  // Fetch product data
+  // Fetch product pack data
   useEffect(() => {
-    const fetchProductData = async () => {
+    const fetchProductPackData = async () => {
       try {
-        const [productRes, detailsRes] = await Promise.all([
-          fetch(`/api/products/${id}`),
-          fetch(`/api/productDetails/by-product/${id}`)
-        ]);
+        const res = await fetch(`/api/productPacks/${id}`);
 
-        if (!productRes.ok) {
-          throw new Error('Product not found');
+        if (!res.ok) {
+          throw new Error('Product pack not found');
         }
 
-        const productData = await productRes.json();
-        setProduct(productData);
-
-        // Product details might not exist, that's okay
-        if (detailsRes.ok) {
-          const detailsData = await detailsRes.json();
-          if (detailsData.success && detailsData.productDetails) {
-            setProductDetails(detailsData.productDetails);
-          }
-        }
+        const packData = await res.json();
+        setProductPack(packData);
       } catch (err) {
-        console.error('Error fetching product:', err);
+        console.error('Error fetching product pack:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -60,7 +48,7 @@ export default function ProductDetailPage() {
     };
 
     if (id) {
-      fetchProductData();
+      fetchProductPackData();
     }
   }, [id]);
 
@@ -74,12 +62,12 @@ export default function ProductDetailPage() {
           if (entry.isIntersecting && !hasAnimatedRef.current) {
             const tl = gsap.timeline();
 
-            tl.fromTo('.product-title',
+            tl.fromTo('.pack-title',
               { y: 50, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.8)" }
             );
 
-            tl.fromTo('.product-content',
+            tl.fromTo('.pack-content',
               { y: 100, opacity: 0 },
               { y: 0, opacity: 1, duration: 0.6, stagger: 0.2, ease: "back.out(1.5)" },
               "-=0.4"
@@ -110,7 +98,7 @@ export default function ProductDetailPage() {
   };
 
   const handleWhatsApp = () => {
-    const message = `Hi, I'm interested in ${product.name}. Can you provide more details?`;
+    const message = `Hi, I'm interested in ${productPack.productName}. Can you provide more details?`;
     const phoneNumber = '918308383842';
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -131,17 +119,17 @@ export default function ProductDetailPage() {
   };
 
   const nextImage = () => {
-    if (product?.images) {
+    if (productPack?.images) {
       setCurrentImageIndex((prev) =>
-        prev === product.images.length - 1 ? 0 : prev + 1
+        prev === productPack.images.length - 1 ? 0 : prev + 1
       );
     }
   };
 
   const prevImage = () => {
-    if (product?.images) {
+    if (productPack?.images) {
       setCurrentImageIndex((prev) =>
-        prev === 0 ? product.images.length - 1 : prev - 1
+        prev === 0 ? productPack.images.length - 1 : prev - 1
       );
     }
   };
@@ -184,12 +172,6 @@ export default function ProductDetailPage() {
     return diffDays > 0 ? diffDays : 0;
   };
 
-  const getStockStatus = (stock) => {
-    if (stock > 10) return { text: 'In Stock', color: 'bg-green-100 text-green-800' };
-    if (stock > 0) return { text: 'Low Stock', color: 'bg-orange-100 text-orange-800' };
-    return { text: 'Out of Stock', color: 'bg-red-100 text-red-800' };
-  };
-
   const getExpiryStatus = (days) => {
     if (days > 30) return 'text-green-600';
     if (days > 7) return 'text-orange-500';
@@ -201,33 +183,33 @@ export default function ProductDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-300 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading product details...</p>
+          <p className="text-gray-600">Loading product pack details...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !product) {
+  if (error || !productPack) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-300 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Product Not Found</h1>
-          <p className="text-gray-600 mb-4">The product you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Product Pack Not Found</h1>
+          <p className="text-gray-600 mb-4">The product pack you're looking for doesn't exist.</p>
           <button
-            onClick={() => router.push('/Products')}
+            onClick={() => router.push('/ProductPacks')}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Back to Products
+            Back to Product Packs
           </button>
         </div>
       </div>
     );
   }
 
-  const allImages = product.images || [];
-  const stockStatus = getStockStatus(product.stock || 0);
-  const daysRemaining = calculateDaysRemaining(product.expireDate);
+  const allImages = productPack.images || [];
+  const daysRemaining = calculateDaysRemaining(productPack.productId?.expireDate);
   const expiryStatus = getExpiryStatus(daysRemaining);
+  const totalPrice = ((productPack.priceInRupee * productPack.quantity) - (productPack.discount || 0) + productPack.shippingPrice);
 
   return (
     <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-slate-300 to-indigo-100">
@@ -246,14 +228,14 @@ export default function ProductDetailPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Images Carousel */}
-            <div className="product-content">
+            <div className="pack-content">
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div className="relative h-96 lg:h-[500px]">
                   {allImages.length > 0 ? (
                     <>
                       <Image
                         src={allImages[currentImageIndex]}
-                        alt={product.name}
+                        alt={productPack.productName}
                         fill
                         className="object-cover"
                       />
@@ -316,7 +298,7 @@ export default function ProductDetailPage() {
                         >
                           <Image
                             src={image}
-                            alt={`${product.name} ${index + 1}`}
+                            alt={`${productPack.productName} ${index + 1}`}
                             width={64}
                             height={64}
                             className="w-full h-full object-cover"
@@ -329,74 +311,94 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Product Information */}
-            <div className="product-content space-y-6">
+            {/* Product Pack Information */}
+            <div className="pack-content space-y-6">
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h1 className="product-title text-3xl font-bold text-gray-800 mb-4">
-                  {product.name}
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-blue-100 p-2 rounded-lg">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="pack-title text-3xl font-bold text-gray-800">
+                      {productPack.productName}
+                    </h1>
+                    <p className="text-sm text-gray-600">Product Pack Bundle</p>
+                  </div>
+                </div>
 
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-3xl font-bold text-green-600">₹{product.price}</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${stockStatus.color}`}>
-                    {stockStatus.text}
-                  </span>
+                  {(productPack.discount || 0) > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-green-600">₹{totalPrice.toFixed(2)}</span>
+                      <span className="text-sm text-red-500 line-through">₹{((productPack.priceInRupee * productPack.quantity) + productPack.shippingPrice).toFixed(2)}</span>
+                      <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                        Save ₹{(productPack.discount || 0).toFixed(2)}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-3xl font-bold text-green-600">₹{totalPrice.toFixed(2)}</span>
+                  )}
                 </div>
 
-                <div className="space-y-3 mb-6 text-gray-800">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Category:</span>
-                    <span className="font-medium">{product.category}</span>
+                {/* Pack Details Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="bg-gray-50 p-3 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{productPack.quantity || 1}</div>
+                    <div className="text-xs text-gray-600 font-medium">Packs</div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Stock:</span>
-                    <span className="font-medium">{product.stock || 0} units</span>
+                  <div className="bg-gray-50 p-3 rounded-lg text-center">
+                    <div className="text-2xl font-bold text-green-600 mb-1">{productPack.dayOfDose}</div>
+                    <div className="text-xs text-gray-600 font-medium">Days</div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Manufactured:</span>
-                    <span className="font-medium">{formatDate(product.manufacturedDate)}</span>
+                  <div className="bg-gray-50 p-3 rounded-lg text-center">
+                    <div className="text-xl font-bold text-purple-600 mb-1">{productPack.usePerDay}</div>
+                    <div className="text-xs text-gray-600 font-medium">Use/Day</div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Expires:</span>
-                    <span className={`font-medium ${expiryStatus}`}>
-                      {formatDate(product.expireDate)}
-                      {daysRemaining > 0 && ` (${daysRemaining} days left)`}
-                    </span>
+                  <div className="bg-gray-50 p-3 rounded-lg text-center">
+                    <div className="text-lg font-bold text-orange-600 mb-1">{productPack.weightInLiter}</div>
+                    <div className="text-xs text-gray-600 font-medium">Size</div>
                   </div>
                 </div>
 
-                {/* Quantity Selector */}
-                <div className="flex items-center text-gray-800 gap-4 mb-6">
-                  <span className="text-gray-600">Quantity:</span>
-                  <div className="flex items-center border border-gray-300 rounded-lg">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3 py-2 text-gray-600 hover:bg-gray-50"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-2 border-x border-gray-300">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="px-3 py-2 text-gray-600 hover:bg-gray-50"
-                    >
-                      +
-                    </button>
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Type:</span>
+                    <span className="font-medium capitalize">{productPack.typeOfPack || 'Standard'}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Based on:</span>
+                    <span className="font-medium">{productPack.productId?.name || 'Unknown Product'}</span>
+                  </div>
+                  {productPack.productId?.manufacturedDate && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Manufactured:</span>
+                      <span className="font-medium">{formatDate(productPack.productId.manufacturedDate)}</span>
+                    </div>
+                  )}
+                  {productPack.productId?.expireDate && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Expires:</span>
+                      <span className={`font-medium ${expiryStatus}`}>
+                        {formatDate(productPack.productId.expireDate)}
+                        {daysRemaining > 0 && ` (${daysRemaining} days left)`}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   <button
                     onClick={handleBuyNow}
-                    disabled={(!product.stock || product.stock === 0)}
-                    className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 font-medium"
+                    className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium"
                   >
                     Buy Now
                   </button>
                   <button
                     onClick={handleWhatsApp}
-                    className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-1 px-3 rounded-lg transition-colors duration-300 font-medium flex items-center justify-center gap-2"
+                    className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-3 px-6 rounded-lg transition-colors duration-300 font-medium flex items-center justify-center gap-2"
                     title="Chat on WhatsApp"
                   >
                     <svg
@@ -406,6 +408,7 @@ export default function ProductDetailPage() {
                     >
                       <path d="M12.032 2c-5.509 0-9.974 4.486-9.974 10.019 0 2.037.6 3.991 1.741 5.657L2 22l4.204-1.101c1.665.913 3.581 1.444 5.609 1.444 5.509 0 9.974-4.486 9.974-10.019S17.541 2 12.032 2zm5.15 14.295c-.252.688-1.404 1.287-1.95 1.311-.426.018-.96.007-1.398-.222-.359-.185-.805-.435-1.398-.735-2.503-1.074-4.137-3.607-4.264-3.771-.127-.164-1.053-1.407-1.053-2.675 0-1.268.638-1.893.868-2.163.229-.27.495-.337.66-.337.164 0 .33 0 .475.008.143.006.33-.07.515.495.185.565.632 1.955.688 2.097.056.143.094.309.019.474-.075.164-.112.247-.224.38-.112.133-.235.297-.336.396-.112.112-.229.247-.098.478.132.23.594.997 1.274 1.613.873.787 1.614 1.048 1.855 1.157.24.11.384.094.525-.056.141-.15.604-.66.765-.887.161-.228.322-.19.537-.113.214.077 1.36.641 1.594.757.234.116.39.174.447.273.056.099.056.564-.197 1.252z"/>
                     </svg>
+                    WhatsApp
                   </button>
                   <button
                     onClick={handlePhoneCall}
@@ -419,70 +422,30 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              {/* Product Description */}
+              {/* Product Pack Description */}
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Description</h2>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-600 whitespace-pre-line">{product.description}</p>
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Pack Details</h2>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-2">What's Included:</h3>
+                    <ul className="list-disc list-inside text-gray-600 space-y-1">
+                      <li>{productPack.quantity || 1} × {productPack.productId?.name || 'Product'} packs</li>
+                      <li>{productPack.dayOfDose} days of recommended dosage</li>
+                      <li>{productPack.usePerDay} times per day usage</li>
+                      <li>{productPack.weightInLiter} size per pack</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-2">Usage Instructions:</h3>
+                    <p className="text-gray-600">
+                      Take {productPack.usePerDay} times per day for {productPack.dayOfDose} days.
+                      Each pack contains {productPack.weightInLiter} of product.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Product Details Section */}
-          {productDetails && (
-            <div className="mt-8 space-y-6">
-              {/* About Section */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">About This Product</h2>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-600 whitespace-pre-line">{productDetails.about}</p>
-                </div>
-              </div>
-
-              {/* Product Information */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Product Information</h2>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-600 whitespace-pre-line">{productDetails.info}</p>
-                </div>
-              </div>
-
-              {/* Additional Images */}
-              {productDetails.additionalImages && productDetails.additionalImages.length > 0 && (
-                <div className="bg-white rounded-xl shadow-lg p-6">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4">Additional Images</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {productDetails.additionalImages.map((image, index) => (
-                      <div key={index} className="aspect-square rounded-lg overflow-hidden">
-                        <Image
-                          src={image}
-                          alt={`Additional ${index + 1}`}
-                          width={300}
-                          height={300}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Powered By */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Powered By</h2>
-                <p className="text-gray-600">{productDetails.poweredBy}</p>
-              </div>
-
-              {/* Professional Opinion */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Professional Opinion</h2>
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-gray-600 whitespace-pre-line">{productDetails.opinion}</p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -491,9 +454,9 @@ export default function ProductDetailPage() {
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
         items={[{
-          productId: product,
+          productId: productPack,
           quantity: quantity,
-          itemType: 'product'
+          itemType: 'productPack'
         }]}
         onOrderSuccess={handleOrderSuccess}
       />

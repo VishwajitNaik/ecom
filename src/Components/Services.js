@@ -17,7 +17,7 @@ const Services = () => {
       title: 'Authentic Ayurvedic Products', 
       description: 'Pure, natural Ayurvedic formulations sourced directly from trusted growers and traditional manufacturers.',
       features: ['100% natural ingredients', 'Traditional preparation methods', 'Quality tested', 'No artificial additives'],
-      image: 'assets/ai-generated-8221936_1280.png',
+      image: 'assets/desktop3.png',
       color: 'from-emerald-500 to-emerald-600'
     },
     { 
@@ -25,7 +25,7 @@ const Services = () => {
       title: 'Ayurvedic Consultation', 
       description: 'Personalized wellness guidance from certified Ayurvedic practitioners for your unique dosha balance.',
       features: ['Dosha analysis', 'Personalized diet plans', 'Lifestyle recommendations', 'Follow-up support'],
-      image: 'assets/ai-generated-8644566_1920.jpg',
+      image: 'assets/desktop.png',
       color: 'from-amber-500 to-amber-600'
     },
     { 
@@ -33,7 +33,7 @@ const Services = () => {
       title: 'Ayurvedic Education', 
       description: 'Learn the ancient wisdom of Ayurveda through workshops, courses, and educational resources.',
       features: ['Online courses', 'Workshops & webinars', 'Educational materials', 'Community support'],
-      image: 'assets/vecteezy_aromatherapy-spa-treatment-on-a-table_2111150.jpg',
+      image: 'assets/desktop2.png',
       color: 'from-orange-500 to-orange-600'
     },
   ];
